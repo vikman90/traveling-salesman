@@ -34,11 +34,6 @@ static Algorithms::Topology topology = Algorithms::Ring;
 static bool config(int argc, char **argv);
 static void printHelp();
 
-static inline int round(double n)
-{
-	return (int)(n + 0.5);
-}
-
 int main(int argc, char **argv)
 {
     clock_t t0, t1;
