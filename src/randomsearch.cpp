@@ -6,7 +6,8 @@
 #include "cycle.h"
 #include "algorithms.h"
 
-namespace Algorithms {
+namespace Algorithms
+{
 
 void randomSearch(Cycle &data, int count, unsigned int seed)
 {

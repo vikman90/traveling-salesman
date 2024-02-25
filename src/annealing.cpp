@@ -17,15 +17,16 @@ inline static bool accept(double delta, double temperature, std::mt19937 &gen)
         return (double)gen() / gen.max() < exp(-delta / temperature);
 }
 
-namespace Algorithms {
+namespace Algorithms
+{
 void simulatedAnnealing(Cycle &data, int count, unsigned int seed, NeighborGenerator neighbor)
 {
-	std::mt19937 generator(seed);
+    std::mt19937 generator(seed);
 
-	// Generate initial solution
-	data.shufflePath(generator);
+    // Generate initial solution
+    data.shufflePath(generator);
 
-	simulatedAnnealing(data, count, generator, neighbor);
+    simulatedAnnealing(data, count, generator, neighbor);
 }
 
 void simulatedAnnealing(Cycle &data, int count, std::mt19937 &generator, NeighborGenerator neighbor)
@@ -58,8 +59,7 @@ void simulatedAnnealing(Cycle &data, int count, std::mt19937 &generator, Neighbo
 
                 if (accept(auxCycle.getCost() - bestCycle.getCost(), temperature, generator)) {
                     bestCycle.setPath(auxCycle);
-                }
-                else {
+                } else {
                     auxCycle.swap(i, j);
                 }
             }
@@ -79,8 +79,7 @@ void simulatedAnnealing(Cycle &data, int count, std::mt19937 &generator, Neighbo
 
                 if (accept(auxCycle.getCost() - bestCycle.getCost(), temperature, generator)) {
                     bestCycle.setPath(auxCycle);
-                }
-                else {
+                } else {
                     auxCycle.invertSubpath(begin, count);
                 }
             }

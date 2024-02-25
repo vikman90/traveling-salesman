@@ -28,8 +28,7 @@ void variableSearch(Cycle &data, int count, unsigned int seed)
         if (curCycle.getCost() < bestCycle.getCost()) {
             bestCycle.setPath(curCycle);
             k = 1;
-        }
-        else
+        } else
             k++;
     } while (++bl < count);
 }

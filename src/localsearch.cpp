@@ -5,12 +5,13 @@
 #include "cycle.h"
 #include "algorithms.h"
 
-namespace Algorithms {
+namespace Algorithms
+{
 
 int localSearch(Cycle &data)
 {
-	const int evalsPerLoop = (int)(data.getCost() * data.getCost()) / 2;
-	int evals = 0;
+    const int evalsPerLoop = (int)(data.getCost() * data.getCost()) / 2;
+    int evals = 0;
     bool updated;
     Cycle curCycle = data;
     Cycle &bestCycle = data;
@@ -38,10 +39,10 @@ int localSearch(Cycle &data)
             }
         }
 
-		evals += evalsPerLoop;
+        evals += evalsPerLoop;
     } while (updated);
 
-	return evals;
+    return evals;
 }
 
 void localSearch(Cycle &data, unsigned int seed)

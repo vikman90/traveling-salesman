@@ -19,8 +19,7 @@ class Cycle
 public:
 
     /// Structure of each node of the graph
-    struct Vertex
-    {
+    struct Vertex {
         float x;
         float y;
     };
@@ -195,7 +194,7 @@ public:
         return edges[index];
     }
 
-	/**
+    /**
      * @brief Reference to edge (solution element)
      * @param index Index of the edge within the vector.
      * @pre @index must be in the range [0, size[.
