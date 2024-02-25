@@ -191,11 +191,11 @@ Cycle & Cycle::operator=(const Cycle &other)
     size_t sEdges = sizeof(int) * other.size;
     size_t sDistances = sizeof(float) * other.size * other.size;
 
-	if (size == 0) {
-		vertices = (Vertex*)malloc(sVertices);
+    if (size == 0) {
+        vertices = (Vertex*)malloc(sVertices);
         edges = (int*)malloc(sEdges);
         distances = (float*)malloc(sDistances);
-	}
+    }
 
     // We expand the vectors if necessary (but never shrink)
 

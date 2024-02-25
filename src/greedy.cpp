@@ -4,7 +4,8 @@
 #include "cycle.h"
 #include "algorithms.h"
 
-namespace Algorithms {
+namespace Algorithms
+{
 
 void greedy(Cycle &data)
 {

@@ -16,10 +16,10 @@ enum NeighborGenerator { Swap, Invert };
 enum Scheme { Generational, Stationary };
 
 enum Hybridization {
-	Everygen_Twochrom,
-	Everygen_Everychrom,
-	Tengen_Twochrom,
-	Tengen_Everychrom
+    Everygen_Twochrom,
+    Everygen_Everychrom,
+    Tengen_Twochrom,
+    Tengen_Everychrom
 };
 
 enum Topology { Star, Ring };

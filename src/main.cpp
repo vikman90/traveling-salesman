@@ -15,7 +15,7 @@ using std::endl;
 
 static enum Algorithm { None, Greedy, RS, LS, VND, SA,
                         GreedyLS, GreedyLSExt, BMB, Grasp, GraspExt, ILS, VNS,
-						Genetic, Memetic, ParallelSA, ParallelGenetic
+                        Genetic, Memetic, ParallelSA, ParallelGenetic
                       } algorithm = None;
 
 static char *pathTSP = NULL;
@@ -106,22 +106,22 @@ int main(int argc, char **argv)
 
     case VNS:
         Algorithms::variableSearch(data, count, seed);
-		break;
+        break;
 
-	case Genetic:
-		Algorithms::genetic(data, size, count, scheme, seed);
-		break;
+    case Genetic:
+        Algorithms::genetic(data, size, count, scheme, seed);
+        break;
 
-	case Memetic:
-		Algorithms::memetic(data, size, count, hybridization, seed);
-		break;
+    case Memetic:
+        Algorithms::memetic(data, size, count, hybridization, seed);
+        break;
 
-	case ParallelSA:
-		Algorithms::parallelAnnealing(data, processes, count, migrLatency, seed);
-		break;
+    case ParallelSA:
+        Algorithms::parallelAnnealing(data, processes, count, migrLatency, seed);
+        break;
 
-	case ParallelGenetic:
-		Algorithms::parallelGenetic(data, processes, size, count, migrLatency, topology, seed);
+    case ParallelGenetic:
+        Algorithms::parallelGenetic(data, processes, size, count, migrLatency, topology, seed);
     }
 
     t1 = clock();
@@ -137,11 +137,11 @@ int main(int argc, char **argv)
         cout << data.edgeAt(data.getSize() - 1) + 1 << endl;
     }
 
-	int seconds = round(double(t1 - t0) / CLOCKS_PER_SEC);
-	int minutes = seconds / 60;
-	seconds -= minutes * 60;
+    int seconds = round(double(t1 - t0) / CLOCKS_PER_SEC);
+    int minutes = seconds / 60;
+    seconds -= minutes * 60;
 
-	cout << seed << "\t" << data.getCost() << "\t" << minutes << ":" << seconds << endl;
+    cout << seed << "\t" << data.getCost() << "\t" << minutes << ":" << seconds << endl;
 
     return EXIT_SUCCESS;
 }
@@ -155,8 +155,7 @@ static bool config(int argc, char **argv)
             if (!strcmp(argv[i], "greedy")) {
                 algorithm = Greedy;
                 continue;
-            }
-            else if (!strcmp(argv[i], "rs")) {
+            } else if (!strcmp(argv[i], "rs")) {
                 algorithm = RS;
                 count = 2000;
                 continue;
@@ -198,69 +197,63 @@ static bool config(int argc, char **argv)
                 algorithm = VNS;
                 count = 50;
                 continue;
-			} else if (!strcmp(argv[i], "ga")) {
+            } else if (!strcmp(argv[i], "ga")) {
                 algorithm = Genetic;
                 count = 2000;
-				size = 30;
+                size = 30;
                 continue;
-			} else if (!strcmp(argv[i], "ma")) {
+            } else if (!strcmp(argv[i], "ma")) {
                 algorithm = Memetic;
                 count = 2000;
-				size = 10;
+                size = 10;
                 continue;
             } else if (!strcmp(argv[i], "psa")) {
                 algorithm = ParallelSA;
                 count = 20;
-				processes = 5;
+                processes = 5;
                 continue;
             } else if (!strcmp(argv[i], "pga")) {
                 algorithm = ParallelGenetic;
                 count = 50;
-				size = 10;
-				migrLatency = 2;
-				processes = 4;
+                size = 10;
+                migrLatency = 2;
+                processes = 4;
                 continue;
             }
 
             else
                 return false;
-        }
-        else if (!strcmp(argv[i], "-n")) {
+        } else if (!strcmp(argv[i], "-n")) {
             if (algorithm == None)
                 return false;
 
             count = strtol(argv[++i], NULL, 10);
             continue;
-        }
-        else if (!strcmp(argv[i], "-s")) {
+        } else if (!strcmp(argv[i], "-s")) {
             if (algorithm == None)
                 return false;
 
             seed = strtoul(argv[++i], NULL, 10);
             continue;
-        }
-		else if (!strcmp(argv[i], "-d")) {
+        } else if (!strcmp(argv[i], "-d")) {
             if (algorithm == None)
                 return false;
 
             size = strtol(argv[++i], NULL, 10);
             continue;
-        }
-		else if (!strcmp(argv[i], "-p")) {
+        } else if (!strcmp(argv[i], "-p")) {
             if (algorithm == None)
                 return false;
 
             processes = strtol(argv[++i], NULL, 10);
             continue;
-        }
-		else if (!strcmp(argv[i], "-l")) {
+        } else if (!strcmp(argv[i], "-l")) {
             if (algorithm == None)
                 return false;
 
             migrLatency = strtol(argv[++i], NULL, 10);
             continue;
-        }
-        else if (!strcmp(argv[i], "-m")) {
+        } else if (!strcmp(argv[i], "-m")) {
             if (algorithm != SA)
                 return false;
 
@@ -269,90 +262,72 @@ static bool config(int argc, char **argv)
             if (!strcmp(argv[i], "swap")) {
                 generator = Algorithms::Swap;
                 continue;
-            }
-            else if (!strcmp(argv[i], "invert")) {
+            } else if (!strcmp(argv[i], "invert")) {
                 generator = Algorithms::Invert;
                 continue;
-            }
-            else
+            } else
                 return false;
-        }
-        else if (!strcmp(argv[i], "-c")) {
+        } else if (!strcmp(argv[i], "-c")) {
             if (i + 1 < argc) {
                 pathTOUR_in = argv[++i];
                 continue;
-            }
-            else
+            } else
                 return false;
-        }
-        else if (!strcmp(argv[i], "-o")) {
+        } else if (!strcmp(argv[i], "-o")) {
             if (i + 1 < argc) {
                 pathTOUR_out = argv[++i];
                 continue;
-            }
-            else
+            } else
                 return false;
-        }
-		else if (!strcmp(argv[i], "-g")) {
-			if (algorithm != Genetic)
-				return false;
+        } else if (!strcmp(argv[i], "-g")) {
+            if (algorithm != Genetic)
+                return false;
 
-			i++;
+            i++;
 
-			if (!strcmp(argv[i], "gener")) {
-				scheme = Algorithms::Generational;
-				continue;
-			}
-			else if (!strcmp(argv[i], "stat")) {
-				scheme = Algorithms::Stationary;
-				continue;
-			}
-			else
-				return false;
-		}
-		else if (!strcmp(argv[i], "-h")) {
-			if (algorithm != Memetic)
-				return false;
+            if (!strcmp(argv[i], "gener")) {
+                scheme = Algorithms::Generational;
+                continue;
+            } else if (!strcmp(argv[i], "stat")) {
+                scheme = Algorithms::Stationary;
+                continue;
+            } else
+                return false;
+        } else if (!strcmp(argv[i], "-h")) {
+            if (algorithm != Memetic)
+                return false;
 
-			i++;
+            i++;
 
-			if (!strcmp(argv[i], "all,2")) {
-				hybridization = Algorithms::Everygen_Twochrom;
-				continue;
-			}
-			else if (!strcmp(argv[i], "all,all")) {
-				hybridization = Algorithms::Everygen_Everychrom;
-				continue;
-			}
-			else if (!strcmp(argv[i], "10,2")) {
-				hybridization = Algorithms::Tengen_Twochrom;
-				continue;
-			}
-			else if (!strcmp(argv[i], "10,all")) {
-				hybridization = Algorithms::Tengen_Everychrom;
-				continue;
-			}
-			else
-				return false;
-		}
-		else if (!strcmp(argv[i], "-t")) {
-			if (algorithm != ParallelGenetic)
-				return false;
+            if (!strcmp(argv[i], "all,2")) {
+                hybridization = Algorithms::Everygen_Twochrom;
+                continue;
+            } else if (!strcmp(argv[i], "all,all")) {
+                hybridization = Algorithms::Everygen_Everychrom;
+                continue;
+            } else if (!strcmp(argv[i], "10,2")) {
+                hybridization = Algorithms::Tengen_Twochrom;
+                continue;
+            } else if (!strcmp(argv[i], "10,all")) {
+                hybridization = Algorithms::Tengen_Everychrom;
+                continue;
+            } else
+                return false;
+        } else if (!strcmp(argv[i], "-t")) {
+            if (algorithm != ParallelGenetic)
+                return false;
 
-			i++;
+            i++;
 
-			if (!strcmp(argv[i], "star")) {
-				topology = Algorithms::Star;
-				continue;
-			}
-			else if (!strcmp(argv[i], "ring")) {
-				topology = Algorithms::Ring;
-				continue;
-			}
-			else
-				return false;
-		}
-        else if (i == argc - 1)
+            if (!strcmp(argv[i], "star")) {
+                topology = Algorithms::Star;
+                continue;
+            } else if (!strcmp(argv[i], "ring")) {
+                topology = Algorithms::Ring;
+                continue;
+            } else
+                return false;
+        } else if (i == argc - 1)
             pathTSP = argv[i];
         else
             return false;
@@ -378,14 +353,14 @@ static void printHelp()
          << "  -m    Use the Neighbor Generation METHOD for Simulated Annealing.\n"
          << "  -c    Show the cost of the tour saved in the TOUR file.\n"
          << "  -o    Save the route to a TOUR file instead of displaying it.\n"
-		 << "  -d    Set the width of the population. Def: according to the script.\n"
-		 << "  -g    Use the evolutionary SCHEME for genetic algorithms.\n"
-		 << "  -h    Select the HYBRIDIZATION type for memetic algorithms.\n"
-		 << "  -p    Specify the number of parallel processes. Def: according to the script.\n"
-		 << "  -l    Change the migration latency. Def: according to the script.\n"
-		 << "  -t    Follow a TOPOLOGY in the parallel genetic algorithm.\n"
+         << "  -d    Set the width of the population. Def: according to the script.\n"
+         << "  -g    Use the evolutionary SCHEME for genetic algorithms.\n"
+         << "  -h    Select the HYBRIDIZATION type for memetic algorithms.\n"
+         << "  -p    Specify the number of parallel processes. Def: according to the script.\n"
+         << "  -l    Change the migration latency. Def: according to the script.\n"
+         << "  -t    Follow a TOPOLOGY in the parallel genetic algorithm.\n"
          << endl
-         << "ALGORITMOS:\n"
+         << "ALGORITHMS:\n"
          << "  greedy    Greedy search\n"
          << endl
          << "  rs        Random search\n"
@@ -400,28 +375,28 @@ static void printHelp()
          << "  grasp+    Extended GRASP\n"
          << "  ils       Iterative local search\n"
          << "  vns       Variable neighborhood search\n"
-		 << endl
-		 << "  ga        Genetic algorithms\n"
-		 << "  ma        Memetic algorithms\n"
-		 << endl
-		 << "  psa       Parallel simulated annealing\n"
-		 << "  pga       Parallel genetic algorithms\n"
+         << endl
+         << "  ga        Genetic algorithms\n"
+         << "  ma        Memetic algorithms\n"
+         << endl
+         << "  psa       Parallel simulated annealing\n"
+         << "  pga       Parallel genetic algorithms\n"
          << endl
          << "METHODS:\n"
          << "  swap     Swap [default]\n"
          << "  invert   Reverse subpath\n"
-		 << endl
-		 << "EVOLUTIONARY SCHEMES:\n"
-		 << "  gener    Generational [default]\n"
-		 << "  stat     Stationary\n"
-		 << endl
-		 << "TYPES OF HYBRIDATION:\n"
-		 << "  all,2    All generations, on the 2 best chromosomes\n"
-		 << "  all,all  All generations, over all chromosomes [default]\n"
-		 << "  10,2     Every 10 generations, on the 2 best chromosomes\n"
-		 << "  10,all   Every 10 generations, on all chromosomes\n"
-		 << endl
-		 << "TOPOLOGY MODELS:\n"
-		 << "  star     Star\n"
-		 << "  ring     Ring [default]\n";
+         << endl
+         << "EVOLUTIONARY SCHEMES:\n"
+         << "  gener    Generational [default]\n"
+         << "  stat     Stationary\n"
+         << endl
+         << "TYPES OF HYBRIDATION:\n"
+         << "  all,2    All generations, on the 2 best chromosomes\n"
+         << "  all,all  All generations, over all chromosomes [default]\n"
+         << "  10,2     Every 10 generations, on the 2 best chromosomes\n"
+         << "  10,all   Every 10 generations, on all chromosomes\n"
+         << endl
+         << "TOPOLOGY MODELS:\n"
+         << "  star     Star\n"
+         << "  ring     Ring [default]\n";
 }
