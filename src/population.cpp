@@ -1,7 +1,7 @@
 /**
  * @file population.h
- * @brief Definición de la clase Population
- * @date 28 de Febrero de 2012
+ * @brief Definition of the Population class
+ * @date February 28, 2013
  */
 
 #include "population.h"
@@ -140,7 +140,7 @@ void Population::evolve(Algorithms::Scheme scheme)
 
 		for (int iLast = size; iLast > 2; iLast -= 2) {
 			iFather = select(iLast);
-			
+
 			do {
 				iMother = select(iLast);
 			} while (iFather == iMother);

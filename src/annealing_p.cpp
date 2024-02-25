@@ -1,4 +1,4 @@
-// 3 de Marzo de 2013
+// March 3, 2013
 
 #include "algorithms.h"
 #include <iostream>
@@ -23,21 +23,21 @@ void parallelAnnealing(Cycle &data, int processes, int count, int migrLatency, u
 
 	for (int k = 1; k < times; k++) {
 
-		// Enfriar
-		
+		// Cool
+
 		for (int i = 0; i < processes; i++)
 			simulatedAnnealing(cycles[i], 1, generator, Swap);
 
-		// Buscar mejor ciclo
+		// Search best cycle
 
 		for (int i = 0; i < processes; i++)
 			if (cycles[i].getCost() < bestCycle.getCost())
 				bestCycle.setPath(cycles[i]);
 
-		// Actualizar estado
+		// Update status
 
 		if (k < times - 1)
-			for (int i = 0; i < processes; i++) 
+			for (int i = 0; i < processes; i++)
 				cycles[i].setPath(bestCycle);
 
 		#ifdef PROFILE

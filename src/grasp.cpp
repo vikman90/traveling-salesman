@@ -1,19 +1,19 @@
-// 7 de Enero de 2013
+// January 7, 2013
 
 #include <cfloat>
 #include "cycle.h"
 #include "algorithms.h"
 
-#define NMUT 5  ///< Numero de mutaciones por ciclo en GRASP+
+#define NMUT 5  ///< Number of mutations per cycle in GRASP+
 
 namespace Algorithms
 {
 
 /**
- * @brief Ordenacion por burbuja parcial
- * @param data Ciclo que manipulamos
- * @param ilast Indice del ultimo nodo añadido (a comparar)
- * @param lsize Longitud de la lista parcial (ordenar @p lsize elementos)
+ * @brief Partial bubble sort
+ * @param data Cycle we handle
+ * @param ilast Index of the last added node (to compare)
+ * @param lsize Partial list length (sort @p lsize elements)
  */
 void bubblesort(Cycle &data, int ilast, int lsize)
 {
@@ -41,11 +41,11 @@ void greedyProb(Cycle &data, std::mt19937 &generator)
 
     data.sortPath();
 
-    // Ciudad inicial
+    // Starting city
 
     data.swap(0, random(generator, data.getSize()));
 
-    // Mientras haya mas ciudades que 'lsize', habra que reordenar
+    // As long as there are more cities than 'lsize', we will have to reorder
 
     while (data.getSize() - ilast - 1 > lsize) {
         bubblesort(data, ilast, lsize);
@@ -53,7 +53,7 @@ void greedyProb(Cycle &data, std::mt19937 &generator)
         ilast++;
     }
 
-    // Seguimos sin reordenar
+    // We continue without reordering
 
     while (data.getSize() - ilast > 2) {
         data.swap(ilast, random(generator, data.getSize() - ilast - 1) + ilast + 1);

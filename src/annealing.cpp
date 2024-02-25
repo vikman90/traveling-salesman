@@ -1,14 +1,14 @@
-// 3 de Diciembre de 2012
+// December 3, 2012
 
 #include "algorithms.h"
 #include <cmath>
 #include "cycle.h"
 
-#define P 0.249175  ///< Múltiplo de la temperatura inicial
-#define NCOOL 20    ///< Número de iteraciones en cada estado de temperatura
-#define TEMPEND 0.1 ///< Temperatura final
+#define P 0.249175  ///< Multiple of the initial temperature
+#define NCOOL 20    ///< Number of iterations at each temperature state
+#define TEMPEND 0.1 ///< Final temperature
 
-/// Condición de aceptación de solución
+/// Solution acceptance condition
 inline static bool accept(double delta, double temperature, std::mt19937 &gen)
 {
     if (delta < 0.0)
@@ -22,7 +22,7 @@ void simulatedAnnealing(Cycle &data, int count, unsigned int seed, NeighborGener
 {
 	std::mt19937 generator(seed);
 
-	// Generar solucion inicial
+	// Generate initial solution
 	data.shufflePath(generator);
 
 	simulatedAnnealing(data, count, generator, neighbor);
@@ -32,10 +32,10 @@ void simulatedAnnealing(Cycle &data, int count, std::mt19937 &generator, Neighbo
 {
     const int nMax = count * data.getSize();
     double temperature;
-    Cycle &bestCycle = data;    // Ciclo a optimizar
-    Cycle auxCycle = bestCycle; // Ciclo candidato
+    Cycle &bestCycle = data;    // Cycle to optimize
+    Cycle auxCycle = bestCycle; // Candidate cycle
 
-    // Establecer temperatura
+    // Set temperature
 
     temperature = P * bestCycle.getCost();
     const double beta = (temperature - TEMPEND) / (nMax * temperature * TEMPEND);
@@ -47,7 +47,7 @@ void simulatedAnnealing(Cycle &data, int count, std::mt19937 &generator, Neighbo
 
             for (int n = 0; n < NCOOL; n++) {
 
-                // Aleatorio en [0, size[
+                // Random in [0, size[
                 i = random(generator, auxCycle.getSize());
 
                 do {
@@ -71,7 +71,7 @@ void simulatedAnnealing(Cycle &data, int count, std::mt19937 &generator, Neighbo
 
             for (int n = 0; n < NCOOL; n++) {
 
-                // Aleatorio en [2, 6]
+                // Random in [2, 6]
                 count = random(generator, 5) + 2;
 
                 begin = random(generator, auxCycle.getSize() - count);

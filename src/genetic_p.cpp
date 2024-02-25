@@ -1,4 +1,4 @@
-// 3 de Marzo de 2013
+// March 3, 2013
 
 #include "algorithms.h"
 #include <cfloat>

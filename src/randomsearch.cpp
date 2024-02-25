@@ -1,4 +1,4 @@
-// 23 de Octubre de 2012
+// October 23, 2012
 
 #include <cstdlib>
 #include <climits>
@@ -16,8 +16,8 @@ void randomSearch(Cycle &data, int count, unsigned int seed)
     std::mt19937 generator(seed);
 
     /*
-     * Generamos una solucion aleatoria (curCycle).
-     * Si mejora a la mejor candidata, la guardamos.
+     * We generate a random solution (curCycle).
+     * If it improves the best candidate, we keep it.
      */
 
     bestCycle.shufflePath(generator);

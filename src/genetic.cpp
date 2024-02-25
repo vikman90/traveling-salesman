@@ -1,4 +1,4 @@
-// 1 de Marzo de 2013
+// March 1, 2013
 
 #include "population.h"
 #include <iostream>
