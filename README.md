@@ -1,5 +1,7 @@
 # Traveling Salesman
 
+[![CMake](https://github.com/vikman90/traveling-salesman/actions/workflows/cmake.yml/badge.svg)](https://github.com/vikman90/traveling-salesman/actions/workflows/cmake.yml)
+
 This repository contains an application to solve the Traveling Salesman Problem (TSP) using different algorithms implemented in C++. The project was originally developed in 2013 as part of the Algorithmics practice at the University of Granada.
 
 ## Description
@@ -33,6 +35,10 @@ cmake --build build
 ```shell
 build/tsp
 ```
+
+## Development documentation
+
+https://vikman90.github.io/traveling-salesman
 
 ## Contributing
 
