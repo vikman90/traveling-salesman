@@ -1,4 +1,4 @@
-// 22 de Octubre de 2012
+// October 22, 2012
 
 #include <iostream>
 #include <cstdlib>
@@ -13,9 +13,9 @@ using std::cin;
 using std::cerr;
 using std::endl;
 
-static enum Algorithm { None, Greedy, BA, BL, VND, ES,
-                        GreedyBL, GreedyBLExt, BMB, Grasp, GraspExt, ILS, VNS,
-						Genetic, Memetic, ParallelES, ParallelGenetic
+static enum Algorithm { None, Greedy, RS, LS, VND, SA,
+                        GreedyLS, GreedyLSExt, BMB, Grasp, GraspExt, ILS, VNS,
+						Genetic, Memetic, ParallelSA, ParallelGenetic
                       } algorithm = None;
 
 static char *pathTSP = NULL;
@@ -55,7 +55,7 @@ int main(int argc, char **argv)
         if (pathTOUR_in != NULL)
             data.loadTour(pathTOUR_in);
         else {
-            cerr << "Nada que hacer...\n";
+            cerr << "Nothing to do...\n";
             return EXIT_FAILURE;
         }
         break;
@@ -64,11 +64,11 @@ int main(int argc, char **argv)
         Algorithms::greedy(data);
         break;
 
-    case BA:
+    case RS:
         Algorithms::randomSearch(data, count, seed);
         break;
 
-    case BL:
+    case LS:
         Algorithms::localSearch(data, seed);
         break;
 
@@ -76,15 +76,15 @@ int main(int argc, char **argv)
         Algorithms::descendantSearch(data, count, seed);
         break;
 
-    case ES:
+    case SA:
         Algorithms::simulatedAnnealing(data, count, seed, generator);
         break;
 
-    case GreedyBL:
+    case GreedyLS:
         Algorithms::greedy_bl(data);
         break;
 
-    case GreedyBLExt:
+    case GreedyLSExt:
         Algorithms::greedy_blext(data, count, seed);
         break;
 
@@ -116,7 +116,7 @@ int main(int argc, char **argv)
 		Algorithms::memetic(data, size, count, hybridization, seed);
 		break;
 
-	case ParallelES:
+	case ParallelSA:
 		Algorithms::parallelAnnealing(data, processes, count, migrLatency, seed);
 		break;
 
@@ -129,7 +129,7 @@ int main(int argc, char **argv)
     if (pathTOUR_out != NULL)
         data.saveTour(pathTOUR_out);
     else {
-        cout << "Recorrido:\n";
+        cout << "Path:\n";
 
         for (int i = 0; i < data.getSize() - 1; i++)
             cout << data.edgeAt(i) + 1 << ", ";
@@ -156,26 +156,26 @@ static bool config(int argc, char **argv)
                 algorithm = Greedy;
                 continue;
             }
-            else if (!strcmp(argv[i], "ba")) {
-                algorithm = BA;
+            else if (!strcmp(argv[i], "rs")) {
+                algorithm = RS;
                 count = 2000;
                 continue;
-            } else if (!strcmp(argv[i], "bl")) {
-                algorithm = BL;
+            } else if (!strcmp(argv[i], "ls")) {
+                algorithm = LS;
                 continue;
             } else if (!strcmp(argv[i], "vnd")) {
                 algorithm = VND;
                 count = 2000;
                 continue;
-            } else if (!strcmp(argv[i], "es")) {
-                algorithm = ES;
+            } else if (!strcmp(argv[i], "sa")) {
+                algorithm = SA;
                 count = 2000;
                 continue;
-            } else if (!strcmp(argv[i], "greedybl")) {
-                algorithm = GreedyBL;
+            } else if (!strcmp(argv[i], "greedyls")) {
+                algorithm = GreedyLS;
                 continue;
-            } else if (!strcmp(argv[i], "greedybl+")) {
-                algorithm = GreedyBLExt;
+            } else if (!strcmp(argv[i], "greedyls+")) {
+                algorithm = GreedyLSExt;
                 count = 5;
                 continue;
             } else if (!strcmp(argv[i], "bmb")) {
@@ -198,22 +198,22 @@ static bool config(int argc, char **argv)
                 algorithm = VNS;
                 count = 50;
                 continue;
-			} else if (!strcmp(argv[i], "ag")) {
+			} else if (!strcmp(argv[i], "ga")) {
                 algorithm = Genetic;
                 count = 2000;
 				size = 30;
                 continue;
-			} else if (!strcmp(argv[i], "am")) {
+			} else if (!strcmp(argv[i], "ma")) {
                 algorithm = Memetic;
                 count = 2000;
 				size = 10;
                 continue;
-            } else if (!strcmp(argv[i], "esparall")) {
-                algorithm = ParallelES;
+            } else if (!strcmp(argv[i], "psa")) {
+                algorithm = ParallelSA;
                 count = 20;
 				processes = 5;
                 continue;
-            } else if (!strcmp(argv[i], "agparall")) {
+            } else if (!strcmp(argv[i], "pga")) {
                 algorithm = ParallelGenetic;
                 count = 50;
 				size = 10;
@@ -261,7 +261,7 @@ static bool config(int argc, char **argv)
             continue;
         }
         else if (!strcmp(argv[i], "-m")) {
-            if (algorithm != ES)
+            if (algorithm != SA)
                 return false;
 
             i++;
@@ -302,7 +302,7 @@ static bool config(int argc, char **argv)
 			if (!strcmp(argv[i], "gener")) {
 				scheme = Algorithms::Generational;
 				continue;
-			} 
+			}
 			else if (!strcmp(argv[i], "stat")) {
 				scheme = Algorithms::Stationary;
 				continue;
@@ -319,7 +319,7 @@ static bool config(int argc, char **argv)
 			if (!strcmp(argv[i], "all,2")) {
 				hybridization = Algorithms::Everygen_Twochrom;
 				continue;
-			} 
+			}
 			else if (!strcmp(argv[i], "all,all")) {
 				hybridization = Algorithms::Everygen_Everychrom;
 				continue;
@@ -344,11 +344,11 @@ static bool config(int argc, char **argv)
 			if (!strcmp(argv[i], "star")) {
 				topology = Algorithms::Star;
 				continue;
-			} 
+			}
 			else if (!strcmp(argv[i], "ring")) {
 				topology = Algorithms::Ring;
 				continue;
-			} 
+			}
 			else
 				return false;
 		}
@@ -363,65 +363,65 @@ static bool config(int argc, char **argv)
 
 static void printHelp()
 {
-    cout << "      ALGORITMICA - Victor M. Fernandez Castro - UNIVERSIDAD DE GRANADA\n"
+    cout << "      Traveling Salesman Problem - Vikman Fernandez-Castro\n"
          << endl
-         << "Modo de empleo:\n"
-         << "  tsp [-a ALGORITMO [-n REP] [-s SEM] [-m METODO]] [-c TOUR] [-o TOUR] TSP\n"
+         << "How to use:\n"
+         << "  tsp [-a ALGORITHM [-n REP] [-s SEED] [-m METHOD]] [-c TOUR] [-o TOUR] TSP\n"
          << endl
-         << "Carga el archivo TSP y calcula el coste de un recorrido minimo a partir de un\n"
-         << "fichero TOUR o bien basandose en un ALGORITMO implementado en la aplicacion.\n"
+         << "Load the TSP file and calculate the cost of a minimum route from a\n"
+         << "TOUR file or based on an ALGORITHM implemented in the application.\n"
          << endl
-         << "OPCIONES:\n"
-         << "  -a    Aplica un ALGORITMO para calcular el coste (invalida a -c).\n"
-         << "  -n    Realiza el algoritmo (REP*n) veces o generaciones. Def: segun el guion.\n"
-         << "  -s    Establece la SEMilla del generador pseudoaleatorio. Def: time().\n"
-         << "  -m    Emplea el METODO de generacion de vecinos para Enfriamiento Simulado.\n"
-         << "  -c    Muestra el coste del recorrido guardado en el fichero TOUR.\n"
-         << "  -o    Guarda el recorrido en un fichero TOUR en lugar de mostrarlo.\n"
-		 << "  -d    Establece la amplitud de la poblacion. Def: segun el guion.\n"
-		 << "  -g    Utiliza el ESQUEMA evolutivo para algoritmos geneticos.\n"
-		 << "  -h    Selecciona el tipo de HIBRIDACION para algoritmos memeticos.\n"
-		 << "  -p    Especifica el numero de procesos paralelos. Def: segun el guion.\n"
-		 << "  -l    Cambia la latencia de migracion. Def: segun el guion.\n"
-		 << "  -t    Sigue una TOPOLOGIA en el algoritmo genetico paralelo.\n"
+         << "OPTIONS:\n"
+         << "  -a    Apply an ALGORITHM to calculate the cost (overrides -c).\n"
+         << "  -n    Perform the algorithm (REP*n) times or generations. Def: according to the script.\n"
+         << "  -s    Set the SEED of the pseudorandom generator. Def: time().\n"
+         << "  -m    Use the Neighbor Generation METHOD for Simulated Annealing.\n"
+         << "  -c    Show the cost of the tour saved in the TOUR file.\n"
+         << "  -o    Save the route to a TOUR file instead of displaying it.\n"
+		 << "  -d    Set the width of the population. Def: according to the script.\n"
+		 << "  -g    Use the evolutionary SCHEME for genetic algorithms.\n"
+		 << "  -h    Select the HYBRIDIZATION type for memetic algorithms.\n"
+		 << "  -p    Specify the number of parallel processes. Def: according to the script.\n"
+		 << "  -l    Change the migration latency. Def: according to the script.\n"
+		 << "  -t    Follow a TOPOLOGY in the parallel genetic algorithm.\n"
          << endl
          << "ALGORITMOS:\n"
-         << "  greedy    Busqueda voraz\n"
+         << "  greedy    Greedy search\n"
          << endl
-         << "  ba        Busqueda aleatoria\n"
-         << "  bl        Busqueda local\n"
-         << "  vnd       Busqueda descendente de entorno variable\n"
-         << "  es        Enfriamiento simulado\n"
+         << "  rs        Random search\n"
+         << "  ls        Local search\n"
+         << "  vnd       Variable neighborhood descent search\n"
+         << "  sa        Simulated annealing\n"
          << endl
-         << "  greedybl  Greedy + Busqueda local\n"
-         << "  greedybl+ Greedy + Busqueda local extendida\n"
-         << "  bmb       Busqueda multiarranque basica\n"
-         << "  grasp     Busqueda avida, aleatoria y extendida\n"
-         << "  grasp+    GRASP extendido\n"
-         << "  ils       Busqueda local reiterada\n"
-         << "  vns       Busqueda basada en entornos cambiantes\n"
+         << "  greedyls  Greedy + Local search\n"
+         << "  greedyls+ Greedy + Extended local search\n"
+         << "  bmb       Basic multiboot search\n"
+         << "  grasp     Greedy randomized adaptive search\n"
+         << "  grasp+    Extended GRASP\n"
+         << "  ils       Iterative local search\n"
+         << "  vns       Variable neighborhood search\n"
 		 << endl
-		 << "  ag        Algoritmos geneticos\n"
-		 << "  am        Algoritmos memeticos\n"
+		 << "  ga        Genetic algorithms\n"
+		 << "  ma        Memetic algorithms\n"
 		 << endl
-		 << "  esparall  Enfriamiento simulado paralelo\n"
-		 << "  agparall  Algoritmos geneticos paralelos\n"
+		 << "  psa       Parallel simulated annealing\n"
+		 << "  pga       Parallel genetic algorithms\n"
          << endl
-         << "METODOS:\n"
-         << "  swap     Intercambio [por defecto]\n"
-         << "  invert   Inversion de sublista\n"
+         << "METHODS:\n"
+         << "  swap     Swap [default]\n"
+         << "  invert   Reverse subpath\n"
 		 << endl
-		 << "ESQUEMAS EVOLUTIVOS:\n"
-		 << "  gener    Generacional [por defecto]\n"
-		 << "  stat     Estacionario\n"
+		 << "EVOLUTIONARY SCHEMES:\n"
+		 << "  gener    Generational [default]\n"
+		 << "  stat     Stationary\n"
 		 << endl
-		 << "TIPOS DE HIBRIDACION:\n"
-		 << "  all,2    Todas las generaciones, sobre los 2 mejores cromosomas\n"
-		 << "  all,all  Todas las generaciones, sobre todos los cromosomas [por defecto]\n"
-		 << "  10,2     Cada 10 generaciones, sobre los 2 mejores cromosomas\n"
-		 << "  10,all   Cada 10 generaciones, sobre todos los cromosomas\n"
+		 << "TYPES OF HYBRIDATION:\n"
+		 << "  all,2    All generations, on the 2 best chromosomes\n"
+		 << "  all,all  All generations, over all chromosomes [default]\n"
+		 << "  10,2     Every 10 generations, on the 2 best chromosomes\n"
+		 << "  10,all   Every 10 generations, on all chromosomes\n"
 		 << endl
-		 << "MODELOS DE TOPOLOGIA:\n"
-		 << "  star     Estrella\n"
-		 << "  ring     Anillo [por defecto]\n";
+		 << "TOPOLOGY MODELS:\n"
+		 << "  star     Star\n"
+		 << "  ring     Ring [default]\n";
 }
