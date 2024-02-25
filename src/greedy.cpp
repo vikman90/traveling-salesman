@@ -1,4 +1,4 @@
-// 23 de Octubre de 2012
+// October 23, 2012
 
 #include <cfloat>
 #include "cycle.h"
@@ -39,7 +39,7 @@ void greedy(Cycle &data)
     }
 }
 
-// Eficiencia O(n^2)
+// Efficiency O(n^2)
 /*void greedy(Cycle &data)
 {
     int last = 0, best = 0;
@@ -48,7 +48,7 @@ void greedy(Cycle &data)
 
     data.sortPath();
 
-    // Buscar la ciudad mas cercana al resto
+    // Find the city closest to the rest
 
     for (int i = 0; i < data.getSize(); i++) {
         partialDist = 0.0;
@@ -68,7 +68,7 @@ void greedy(Cycle &data)
 
     data.swap(0, best);
 
-    // A partir del nodo seleccionado, rellenar.
+    // Starting from the selected node, fill.
 
     for (int k = 1; k < data.getSize(); k++) {
         last = data.edgeAt(k - 1);
@@ -85,14 +85,14 @@ void greedy(Cycle &data)
     }
 }*/
 
-/* Eficiencia O(n^3) por uso de exists() y recorrido superfluo
+/* O(n^3) efficiency due to the use of exists() and superfluous traversal
  void greedy(Cycle &data)
 {
     int last;
     double dist = DBL_MAX;
     double partialDist;
 
-    // Buscar la ciudad mas cercana al resto
+    // Find the city closest to the rest
 
     for (int i = 0; i < data.getSize(); i++) {
         partialDist = 0.0;
@@ -110,7 +110,7 @@ void greedy(Cycle &data)
         }
     }
 
-    // A partir del nodo seleccionado, rellenar.
+    // Starting from the selected node, fill.
 
     for (int k = 1; k < data.getSize(); k++) {
         last = data.edgeAt(k - 1);

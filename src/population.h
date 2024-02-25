@@ -1,7 +1,7 @@
 /**
  * @file population.h
- * @brief Declaración de la clase Population
- * @date 28 de Febrero de 2012
+ * @brief Population class declaration
+ * @date February 28, 2013
  */
 
 #ifndef POPULATION_H
@@ -47,7 +47,7 @@ private:
 	Cycle cross(int iFather, int iMother);
 	void replace(int iFather, int iMother, Cycle &soon, Cycle &daughter, int iLast);
 	void replace(Cycle &soon, Cycle &daughter);
-	
+
 	static bool mutateNow();
 	static bool crossNow();
 };

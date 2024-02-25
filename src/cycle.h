@@ -1,7 +1,7 @@
 /**
  * @file cycle.h
- * @brief Declaración de la clase Cycle
- * @date 22 de Octubre de 2012
+ * @brief Declaration of the Cycle class
+ * @date October 22, 2012
  */
 
 #ifndef CYCLE_H
@@ -10,16 +10,15 @@
 #include <random>
 
 /**
- * @brief Clase Ciclo
+ * @brief Cycle Class
  *
- * Proporciona la estructura de almacenamiento de un ciclo hamiltoniano de
- * puntos en 2D.
+ * Provides the storage structure of a 2D point Hamiltonian cycle.
  */
 class Cycle
 {
 public:
 
-    /// Estructura de cada nodo del grafo
+    /// Structure of each node of the graph
     struct Vertex
     {
         float x;
@@ -27,30 +26,30 @@ public:
     };
 
     /**
-     * @brief Constructor por defecto
+     * @brief Default constructor
      *
-     * Crea un grafo vacío.
+     * Creates an empty graph.
      */
     Cycle();
 
     /**
-     * @brief Constructor con tamaño asignado
-     * @param size Tamaño del grafo.
+     * @brief Constructor with assigned size
+     * @param size Size of the graph.
      */
     explicit Cycle(int size);
 
     /**
-     * @brief Constructor a partir de archivo
-     * @param path Ruta de un archivo TSP.
+     * @brief Constructor from file
+     * @param path Path of a TSP file.
      *
-     * Si el archivo TSP no se puede leer, se fuerza el cierre del programa.
-     * Para detectar errores, cree un grafo vacío y llame a loadTSP().
+     * If the TSP file cannot be read, the program is forced to close.
+     * To detect errors, create an empty graph and call loadTSP().
      */
     explicit Cycle(const char *path);
 
     /**
-     * @brief Constructor de copias
-     * @param other Grafo de origen.
+     * @brief Copy constructor
+     * @param other Source graph.
      */
     Cycle(const Cycle &other);
 
@@ -58,90 +57,89 @@ public:
     ~Cycle();
 
     /**
-     * @brief Operador de asignación
-     * @param other Objeto origen.
-     * @return Referencia al propio objeto.
+     * @brief Assignment operator
+     * @param other Source object.
+     * @return Reference to the object itself.
      */
     Cycle & operator=(const Cycle &other);
 
     /**
-     * @brief Cargar nodos de un archivo TSP
-     * @param path Ruta del archivo.
-     * @post Se actualiza la matriz de distancias implícitamente.
-     * @return Si se ha leído correctamente.
+     * @brief Load nodes from a TSP file
+     * @param path File path.
+     * @post The distance matrix is updated implicitly.
+     * @return Whether it was read correctly.
      */
     bool loadTsp(const char *path);
 
     /**
-     * @brief Cargar ruta de un archivo TOUR
-     * @param path Ruta del archivo.
-     * @pre El tamaño de la ruta debe coincidir con el de los nodos cargados.
-     * @return Si se ha leído correctamente.
+     * @brief Load path from a TOUR file
+     * @param path File path.
+     * @pre The size of the path must match the size of the loaded nodes.
+     * @return Whether it was read correctly.
      */
     bool loadTour(const char *path);
 
     /**
-     * @brief Guardar ruta en un archivo TOUR
-     * @param path Ruta del archivo destino.
-     * @return Si se ha escrito correctamente.
+     * @brief Save route to a TOUR file
+     * @param path Path of the destination file.
+     * @return Whether it was written correctly.
      */
     bool saveTour(const char *path) const;
 
     /**
-     * @brief Limpiar ruta
-     * @post El coste se hace infinito
+     * @brief Clear path
+     * @post The cost becomes infinite
      */
     void clearPath();
 
     /**
-     * @brief Establecer ruta
-     * @param other Ciclo que contiene la ruta
-     * @pre Los vértices de @p other deben coincidir con los del propio objeto.
+     * @brief Set path
+     * @param other Loop containing the path
+     * @pre The vertices of @p other must match those of the object itself.
      *
-     * Copia la ruta del ciclo @p other, @b suponiendo que los nodos son los
-     * mismos. Si el tamaño es distinto, el método devuelve @c false, pero si
-     * algún vértice tiene posiciones diferentes, el comportamiento de getCost()
-     * no está definido.
+     * Copy the cycle path @p other, @b assuming the nodes are the same. If the
+     * size is different, the method returns @c false, but if any vertex has
+     * different positions, the behavior of getCost() is undefined.
      *
-     * En caso de que los vértices sean distintos, o quepa posibilidad de ello,
-     * se debe usar el operador de asignación.
+     * If the vertices are different, or there is a possibility of this, the
+     * assignment operator must be used.
      *
-     * @return Si ha tenido éxito la operación.
+     * @return Whether the operation was successful.
      */
     bool setPath(const Cycle &other);
 
     /**
-     * @brief Ordenar ruta
+     * @brief Sort path
      *
-     * Ordena el vector de aristas trazando una ruta que recorre ordenadamente
-     * todos los nodos almacenados.
+     * Sorts the vector of edges by tracing a route that runs through all the
+     * stored nodes in an orderly manner.
      */
     void sortPath();
 
     /**
-     * @brief Barajar ruta
-     * @param generator Generador de números.
+     * @brief Shuffle path
+     * @param generator Number generator.
      *
-     * Desordena el vector de aristas con el algoritmo Mersenne Twist. Este
-     * algoritmo produce ciclos de periodo 2^19937 - 1 con una velocidad
-     * similar a la función estándar de C.
+     * Shuffles the edge vector with the Mersenne Twist algorithm. This
+     * algorithm produces cycles of period 2^19937 - 1 with a speed similar to
+     * the standard C function.
      */
     void shufflePath(std::mt19937 &generator);
 
     /**
-     * @brief Barajar ruta parcialmente
-     * @param count Tamaño de la sublista.
-     * @param generator Generador de números.
+     * @brief Shuffle subpath
+     * @param count Size of the subpath.
+     * @param generator Number generator.
      *
-     * Desordena la sublista de tamaño @p count a partir del índice @p begin.
-     * Si la sublista es de longitud 2, se recomienda swap().
+     * Shuffles the sublist of size @p count starting at index @p begin.
+     * If the sublist is of length 2, swap() is recommended.
      */
     void shuffleSubpath(int count, std::mt19937 &generator);
 
     /**
-     * @brief Invertir sublista
-     * @param first Posicion de la primera arista
-     * @param count Tamaño de la sublista.
+     * @brief Reverse subpath
+     * @param first Position of the first edge
+     * @param count Size of the subpath.
      */
     void invertSubpath(int first, int count);
 
@@ -154,12 +152,12 @@ public:
     void swap(int i, int j);
 
     /**
-     * @brief Coste total del ciclo (función objetivo)
+     * @brief Total cycle cost (objective function)
      *
-     * Este método es equivalente a cost(getSize()).
+     * This method is equivalent to cost(getSize()).
      *
      * @overload cost(int bound)
-     * @return Sumatoria de distancias de la ruta completa.
+     * @return Sum of distances of the complete path.
      */
     inline float getCost() const
     {
@@ -167,8 +165,8 @@ public:
     }
 
     /**
-     * @brief Obtener tamaño
-     * @return Número de nodos almacenados en el ciclo.
+     * @brief Get size
+     * @return Number of nodes stored in the cycle.
      */
     inline int getSize() const
     {
@@ -176,10 +174,10 @@ public:
     }
 
     /**
-     * @brief Referencia constante a vértice
-     * @param index Índice del vértice dentro del vector.
-     * @pre @index debe estar en el rango [0, size[.
-     * @return Referencia constante al vértice indicado.
+     * @brief Constant reference to vertex
+     * @param index Index of the vertex within the vector.
+     * @pre @index must be in the range [0, size[.
+     * @return Constant reference to the indicated vertex.
      */
     inline const Vertex & vertexAt(int index) const
     {
@@ -187,10 +185,10 @@ public:
     }
 
     /**
-     * @brief Referencia constante a arista (elemento de la solución)
-     * @param index Índice de la arista dentro del vector.
-     * @pre @index debe estar en el rango [0, size[.
-     * @return Referencia constante a la arista indicada.
+     * @brief Constant reference to edge (solution element)
+     * @param index Index of the edge within the vector.
+     * @pre @index must be in the range [0, size[.
+     * @return Constant reference to the indicated edge.
      */
     inline const int & edgeAt(int index) const
     {
@@ -198,10 +196,10 @@ public:
     }
 
 	/**
-     * @brief Referencia a arista (elemento de la solución)
-     * @param index Índice de la arista dentro del vector.
-     * @pre @index debe estar en el rango [0, size[.
-     * @return Referencia constante a la arista indicada.
+     * @brief Reference to edge (solution element)
+     * @param index Index of the edge within the vector.
+     * @pre @index must be in the range [0, size[.
+     * @return Constant reference to the indicated edge.
      */
     inline int & edgeAt(int index)
     {
@@ -209,11 +207,11 @@ public:
     }
 
     /**
-     * @brief Distancia entre dos nodos
-     * @param i Índice de uno de los vértices.
-     * @param j Índice del otro vértice.
-     * @pre @p i y @p j deben estar en el rango [0, size[.
-     * @return Distancia euclídea entre los vértices indicados.
+     * @brief Distance between two nodes
+     * @param i Index of one of the vertices.
+     * @param j Index of the other vertex.
+     * @pre @p i and @p j must be in the range [0, size[.
+     * @return Euclidean distance between the indicated vertices.
      */
     inline float distance(int i, int j) const
     {
@@ -222,26 +220,26 @@ public:
 
 private:
 
-    int size;           ///< Tamaño del grafo
-    float cost;        ///< Coste del ciclo
-    Vertex *vertices;   ///< Vector de nodos
-    int *edges;         ///< Aristas como secuencia de nodos (vector solución)
-    float *distances;  ///< Matriz simétrica de distancias
+    int size;           ///< Graph size
+    float cost;         ///< Cycle cost
+    Vertex *vertices;   ///< Vector of nodes
+    int *edges;         ///< Edges as sequence of nodes (solution vector)
+    float *distances;   ///< Symmetric distance matrix
 
     /**
-     * @brief Actualizar matriz de distancias
+     * @brief Update distance matrix
      *
-     * Se debe llamar en caso de modificar alguno de los nodos, y es necesario
-     * para que distance() y getCost() devuelvan resultados correctos.
+     * It must be called if any of the nodes are modified, and is necessary so
+     * that distance() and getCost() return correct results.
      */
     void updateDistances();
 
 public:
     /**
-     * @brief Actualizar coste del ciclo
+     * @brief Update cycle cost
      *
-     * Se debe llamar en caso de modificar alguno de los nodos o aristas. Es
-     * necesario para que getCost() devuelva un resultado correcto.
+     * It must be called in case of modifying any of the nodes or edges. It is
+     * required for getCost() to return a correct result.
      */
     void updateCost();
 };

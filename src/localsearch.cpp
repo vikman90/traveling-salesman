@@ -1,4 +1,4 @@
-// 24 de Octubre de 2012
+// October 24, 2012
 
 #include <cstdlib>
 #include <climits>
@@ -16,10 +16,10 @@ int localSearch(Cycle &data)
     Cycle &bestCycle = data;
 
     /*
-     * Generamos todos los posibles vecinos.
-     * Nos quedamos con el de mejor coste.
-     * Repetimos hasta que no se obtenga un vecino mejor.
-     */
+      * We generate all possible neighbors.
+      * We choose the one with the best cost.
+      * We repeat until we stop getting a better neighbor.
+      */
 
     do {
         curCycle.setPath(bestCycle);

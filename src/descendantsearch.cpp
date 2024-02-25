@@ -1,4 +1,4 @@
-// 7 de Noviembre de 2012
+// November 7, 2012
 
 #include <climits>
 #include <cfloat>
@@ -16,11 +16,11 @@ void descendantSearch(Cycle &data, int count, unsigned int seed)
     int nTotal = 1;
     int k = 1;
     std::mt19937 generator(seed);
-    Cycle &curCycle = data;     // Solución actual (a optimizar)
-    Cycle auxCycle = data;      // Solución vecina auxiliar
-    Cycle bestNeighbor = data;  // Mejor solución vecina
+    Cycle &curCycle = data;     // Current solution (to be optimized)
+    Cycle auxCycle = data;      // Auxiliary neighbor solution
+    Cycle bestNeighbor = data;  // Best neighbor solution
 
-    // Generar solución inicial
+    // Generate initial solution
 
     curCycle.shufflePath(generator);
 
@@ -29,7 +29,7 @@ void descendantSearch(Cycle &data, int count, unsigned int seed)
         auxCycle.setPath(curCycle);
 
         switch (k) {
-        case 1: // k = 1 -> Intercambio
+        case 1: // k = 1 -> Swap
             nTotal += N1;
 
             for (int i = 1; i < data.getSize(); i++) {
@@ -45,7 +45,7 @@ void descendantSearch(Cycle &data, int count, unsigned int seed)
 
             break;
 
-        case 2: // k = 2 -> Sublista aleatoria de tamaño 4
+        case 2: // k = 2 -> Size 4 random sublist
             nTotal += N2;
 
             for (int i = 0; i < N2; i++) {
@@ -59,7 +59,7 @@ void descendantSearch(Cycle &data, int count, unsigned int seed)
 
             break;
 
-        case 3: // k = 3 -> Sublista aleatoria de tamaño 6
+        case 3: // k = 3 -> Size 6 random sublist
             nTotal += N3;
 
             for (int i = 0; i < N3; i++) {

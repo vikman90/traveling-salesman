@@ -1,4 +1,4 @@
-// 23 de Octubre de 2012
+// October 23, 2012
 
 #ifndef ALGORITHMS_H
 #define	ALGORITHMS_H
@@ -8,14 +8,14 @@
 
 class Cycle;
 
-namespace Algorithms 
+namespace Algorithms
 {
 
 enum NeighborGenerator { Swap, Invert };
 
 enum Scheme { Generational, Stationary };
 
-enum Hybridization { 
+enum Hybridization {
 	Everygen_Twochrom,
 	Everygen_Everychrom,
 	Tengen_Twochrom,
@@ -24,7 +24,7 @@ enum Hybridization {
 
 enum Topology { Star, Ring };
 
-// Entero en el rango [0, max[
+// Integer in the range [0, max[
 inline int random(std::mt19937 &generator, int max)
 {
     register unsigned int value;

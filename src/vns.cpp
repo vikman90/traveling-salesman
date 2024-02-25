@@ -1,4 +1,4 @@
-// 8 de Enero de 2013
+// January 8, 2013
 
 #include "cycle.h"
 #include "algorithms.h"
