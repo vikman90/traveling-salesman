@@ -1,7 +1,7 @@
 /**
  * @file cycle.cpp
- * @brief Definición de la clase Cycle
- * @date 22 de Octubre de 2012
+ * @brief Definition of the Cycle class
+ * @date October 22, 2012
  */
 
 #include <iostream>
@@ -14,22 +14,21 @@
 #include "cycle.h"
 #include "algorithms.h"
 
-#define LINE_WIDTH 80   /// Longitud máxima para una línea
+#define LINE_WIDTH 80   /// Maximum length for one line
 
 //------------------------------------------------------------------------------
 
 /**
- * @brief Obtener el valor de una etiqueta en un archivo
- * @param file Flujo de datos.
- * @param result Cadena donde se almacenará el resultado.
- * @param label Etiqueta que se busca.
+ * @brief Get the value of a tag in a file
+ * @param file Data stream.
+ * @param result String where the result will be stored.
+ * @param label Label to be searched.
  *
- * Se busca una etiqueta (palabra que antecede a ':') y se escribe
- * en la cadena de resultado el resto de la línea. La búsqueda empieza
- * por el principio del archivo, y el puntero se queda al principio de
- * la línea siguiente.
+ * A label (word before ':') is searched for and the rest of the line is written
+ * to the result string. The search starts at the beginning of the file, and the
+ * pointer stays at the beginning of the next line.
  *
- * @return Si se ha encontrado la etiqueta.
+ * @return Whether the tag was found.
  */
 static bool fileTag(std::ifstream &file, char *result, const char *label)
 {
@@ -52,18 +51,18 @@ static bool fileTag(std::ifstream &file, char *result, const char *label)
         }
     } while (!file.fail());
 
-    cerr << "Error de lectura: etiqueta <" << label << "> no encontrada.\n";
+    cerr << "Reading error: label <" << label << "> not found.\n";
     return false;
 }
 
 //------------------------------------------------------------------------------
 
 /**
- * @brief Verificar un atributo en un archivo
- * @param file Flujo de datos.
- * @param attrib Nombre del atributo (etiqueta).
- * @param value Valor que se espera que tenga el atributo.
- * @return Si se ha encontrado la etiqueta y el valor coincide.
+ * @brief Check an attribute in a file
+ * @param file Data flow.
+ * @param attrib Name of the attribute (tag).
+ * @param value Value that the attribute is expected to have.
+ * @return Whether the tag was found and the value matches.
  */
 static bool fileAssert(std::ifstream &file, const char *attrib, const char *value)
 {
@@ -79,8 +78,8 @@ static bool fileAssert(std::ifstream &file, const char *attrib, const char *valu
     file.unget();
 
     if (strcmp(_ptr, value)) {
-        std::cerr << "Error de lectura: Se esperaba <" << attrib << "=="
-                  << value << "> y se obtuvo <" << _str << ">\n";
+        std::cerr << "Read error: Expected <" << attrib << "=="
+                  << value << "> and got <" << _str << ">\n";
         return false;
     }
 
@@ -90,11 +89,11 @@ static bool fileAssert(std::ifstream &file, const char *attrib, const char *valu
 //------------------------------------------------------------------------------
 
 /**
- * @brief Buscar una línea dentro de un archivo
- * @param file Flujo de datos.
- * @param line Línea que se busca.
- * @post El puntero queda situado al principio de la línea siguiente.
- * @return Si se ha encontrado la línea.
+ * @brief Find a line within a file
+ * @param file Data flow.
+ * @param line Line to search for.
+ * @post The pointer is placed at the beginning of the next line.
+ * @return whether the line was found.
  */
 static bool fileFindLine(std::ifstream &file, const char *line)
 {
@@ -115,7 +114,7 @@ static bool fileFindLine(std::ifstream &file, const char *line)
 }
 
 //------------------------------------------------------------------------------
-// Constructor por defecto
+// Default constructor
 
 Cycle::Cycle()
 {
@@ -127,7 +126,7 @@ Cycle::Cycle()
 }
 
 //------------------------------------------------------------------------------
-// Constructor con tamaño asignado
+// Constructor with assigned size
 
 Cycle::Cycle(int size)
 {
@@ -139,7 +138,7 @@ Cycle::Cycle(int size)
 }
 
 //------------------------------------------------------------------------------
-// Constructor a partir de archivo
+// Constructor from file
 
 Cycle::Cycle(const char *path)
 {
@@ -154,7 +153,7 @@ Cycle::Cycle(const char *path)
 }
 
 //------------------------------------------------------------------------------
-// Constructor de copias
+// Copy constructor
 
 Cycle::Cycle(const Cycle &other)
 {
@@ -184,7 +183,7 @@ Cycle::~Cycle()
 }
 
 //------------------------------------------------------------------------------
-// Operador de asignación
+// Assignment operator
 
 Cycle & Cycle::operator=(const Cycle &other)
 {
@@ -198,7 +197,7 @@ Cycle & Cycle::operator=(const Cycle &other)
         distances = (float*)malloc(sDistances);
 	}
 
-    // Ampliamos los vectores si es necesario (pero nunca encogemos)
+    // We expand the vectors if necessary (but never shrink)
 
     if (size < other.size) {
         vertices = (Vertex*)realloc(vertices, sVertices);
@@ -216,7 +215,7 @@ Cycle & Cycle::operator=(const Cycle &other)
 }
 
 //------------------------------------------------------------------------------
-// Cargar nodos de un archivo TSP
+// Load nodes from a TSP file
 
 bool Cycle::loadTsp(const char *path)
 {
@@ -226,7 +225,7 @@ bool Cycle::loadTsp(const char *path)
     ifstream file(path);
 
     if (!file) {
-        cerr << "No se pudo abrir el archivo " << path << endl;
+        cerr << "Could not open file " << path << endl;
         return false;
     }
 
@@ -241,7 +240,7 @@ bool Cycle::loadTsp(const char *path)
     newSize = atoi(_str);
 
     if (newSize == 0) {
-        cerr << "Error de lectura: dimension no reconocida.\n";
+        cerr << "Read error: dimension not recognized.\n";
         return false;
     }
 
@@ -276,7 +275,7 @@ bool Cycle::loadTsp(const char *path)
 }
 
 //------------------------------------------------------------------------------
-// Cargar ruta de un archivo TOUR
+// Load path from a TOUR file
 
 bool Cycle::loadTour(const char *path)
 {
@@ -290,7 +289,7 @@ bool Cycle::loadTour(const char *path)
         return false;
     }
 
-    // Cabecera
+    // Head
 
     if (!fileAssert(file, "TYPE", "TOUR"))
         return false;
@@ -301,12 +300,12 @@ bool Cycle::loadTour(const char *path)
     _size = atoi(_str);
 
     if (_size != size) {
-        cerr << "Error de lectura: la dimension del recorrido es incorrecta.\n";
+        cerr << "Reading error: the path dimension is incorrect.\n";
         file.close();
         return false;
     }
 
-    // Leer aristas
+    // Read edges
 
     if (!fileFindLine(file, "TOUR_SECTION"))
         return false;
@@ -328,7 +327,7 @@ bool Cycle::loadTour(const char *path)
 }
 
 //------------------------------------------------------------------------------
-// Guardar ruta en un archivo TOUR
+// Save route to a TOUR file
 
 bool Cycle::saveTour(const char *path) const
 {
@@ -340,14 +339,14 @@ bool Cycle::saveTour(const char *path) const
         return false;
     }
 
-    // Cabecera
+    // Head
 
     file << "NAME : " << path << endl;
     file << "TYPE : TOUR\n";
     file << "DIMENSION : " << size << endl;
     file << "TOUR_SECTION\n";
 
-    // Lista de índices de nodos (aristas)
+    // List of node indexes (edges)
 
     for (int i = 0; i < size; i++)
         file << edges[i] + 1 << endl;
@@ -365,7 +364,7 @@ bool Cycle::saveTour(const char *path) const
 }
 
 //------------------------------------------------------------------------------
-// Establecer ruta
+// Set path
 
 bool Cycle::setPath(const Cycle &other)
 {
@@ -378,7 +377,7 @@ bool Cycle::setPath(const Cycle &other)
 }
 
 //------------------------------------------------------------------------------
-// Limpiar ruta
+// Clear path
 
 void Cycle::clearPath()
 {
@@ -387,7 +386,7 @@ void Cycle::clearPath()
 }
 
 //------------------------------------------------------------------------------
-// Ordenar ruta
+// Sort path
 
 void Cycle::sortPath()
 {
@@ -398,7 +397,7 @@ void Cycle::sortPath()
 }
 
 //------------------------------------------------------------------------------
-// Barajar ruta
+// Shuffle path
 
 void Cycle::shufflePath(std::mt19937 &generator)
 {
@@ -408,16 +407,16 @@ void Cycle::shufflePath(std::mt19937 &generator)
     sortPath();
 
     /*
-     * Se comienza intercambiando un nodo aleatorio por el último.
-     * A partir de ahí recortamos el vector por la derecha y continuamos.
+     * We start by exchanging a random node for the last one.
+     * From there, we cut the vector on the right and continue.
      */
 
     for (int k = 0; k < bound; k++) {
         i = bound - k;
 
         /*
-         * Seleccionar el nodo a intercambiar por el del final.
-         * Generar un valor aleatorio en [0, i]
+         * Select the node to exchange for the one at the end.
+         * Generate a random value in [0, i]
          */
 
         j = Algorithms::random(generator, i + 1);
@@ -431,7 +430,7 @@ void Cycle::shufflePath(std::mt19937 &generator)
 }
 
 //------------------------------------------------------------------------------
-// Barajar ruta parcialmente
+// Shuffle subpath
 
 void Cycle::shuffleSubpath(int count, std::mt19937 &generator)
 {
@@ -440,23 +439,23 @@ void Cycle::shuffleSubpath(int count, std::mt19937 &generator)
     int i, j;
 
     /*
-     * Seleccionar el índice de comienzo de la lista.
-     * Generar un valor en [0, size[
+     * Select the starting index of the list.
+     * Generate a value in [0, size[
      */
 
     begin = Algorithms::random(generator, size - count);
 
     /*
-     * Se comienza intercambiando un nodo aleatorio por el último.
-     * A partir de ahí recortamos el vector por la derecha y continuamos.
+     * We start by exchanging a random node for the last one.
+     * From there we cut the vector on the right and continue.
      */
 
     for (int k = 0; k < bound; k++) {
         i = bound - k;
 
         /*
-         * Seleccionar el nodo a intercambiar por el del final.
-         * Generar un valor aleatorio en [0, i]
+         * Select the node to exchange for the one at the end.
+         * Generate a random value in [0, i]
          */
 
         j = Algorithms::random(generator, i + 1);
@@ -470,7 +469,7 @@ void Cycle::shuffleSubpath(int count, std::mt19937 &generator)
 }
 
 //------------------------------------------------------------------------------
-// Invertir sublista
+// Reverse subpath
 
 void Cycle::invertSubpath(int first, int count)
 {
@@ -489,7 +488,7 @@ void Cycle::invertSubpath(int first, int count)
 }
 
 //------------------------------------------------------------------------------
-// Intercambiar dos nodos en la ruta
+// Swap two nodes on the path
 
 void Cycle::swap(int i, int j)
 {
@@ -499,10 +498,10 @@ void Cycle::swap(int i, int j)
     const int nextJ = (j + 1) % size;
 
     /*
-     * Actualizar coste
-     * Si los valores son adyacentes, solo hay que restar una vez la arista que
-     * los une.
-     */
+      * Update cost
+      * If the values are adjacent, you only have to subtract the edge that
+      * joins them once.
+      */
 
     if (nextI == j) {
         cost -= distance(edges[prevI], edges[i]) + distance(edges[j], edges[nextJ]);
@@ -517,7 +516,7 @@ void Cycle::swap(int i, int j)
         cost += distance(edges[prevJ], edges[i]) + distance(edges[i], edges[nextJ]);
     }
 
-    // Intercambiar nodos
+    // Swap noded
 
     register int auxEdge = edges[i];
     edges[i] = edges[j];
@@ -525,7 +524,7 @@ void Cycle::swap(int i, int j)
 }
 
 //------------------------------------------------------------------------------
-// Actualizar matriz de distancias
+// Update distance matrix
 
 void Cycle::updateDistances()
 {
@@ -543,7 +542,7 @@ void Cycle::updateDistances()
 }
 
 //------------------------------------------------------------------------------
-// Calcular coste del cidlo
+// Calculate cost of the cycle
 
 void Cycle::updateCost()
 {
