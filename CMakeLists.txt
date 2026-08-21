@@ -9,25 +9,50 @@ project(TSP
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+option(BUILD_GUI "Build desktop GUI visualizer" ON)
+
 include(FetchContent)
 
-# Fetch webview library
-FetchContent_Declare(
-    webview
-    GIT_REPOSITORY https://github.com/webview/webview.git
-    GIT_TAG 0.12.0
-)
-
-# Fetch nlohmann_json
+# Fetch nlohmann_json (used for tests and GUI)
 FetchContent_Declare(
     nlohmann_json
     GIT_REPOSITORY https://github.com/nlohmann/json.git
     GIT_TAG v3.11.3
 )
+FetchContent_MakeAvailable(nlohmann_json)
 
-FetchContent_MakeAvailable(webview nlohmann_json)
+# Check if GUI dependencies are available on the host system
+set(CAN_BUILD_GUI OFF)
+if(BUILD_GUI)
+    if(UNIX AND NOT APPLE)
+        find_package(PkgConfig QUIET)
+        if(PKG_CONFIG_FOUND)
+            pkg_check_modules(WEBKIT_GTK QUIET webkit2gtk-4.1 webkit2gtk-4.0 webkitgtk-6.0)
+            if(WEBKIT_GTK_FOUND)
+                set(CAN_BUILD_GUI ON)
+            else()
+                message(WARNING "WebKitGTK development headers not found. Skipping 'tsp-gui' build. Install 'libwebkit2gtk-4.1-dev' and 'libgtk-3-dev' to enable GUI.")
+            endif()
+        else()
+            message(WARNING "pkg-config not found. Skipping 'tsp-gui' build.")
+        endif()
+    else()
+        # Windows (WebView2) or macOS (WebKit/Cocoa)
+        set(CAN_BUILD_GUI ON)
+    endif()
+endif()
 
-# Core algorithm source files (shared between CLI and GUI)
+if(CAN_BUILD_GUI)
+    # Fetch webview library
+    FetchContent_Declare(
+        webview
+        GIT_REPOSITORY https://github.com/webview/webview.git
+        GIT_TAG 0.12.0
+    )
+    FetchContent_MakeAvailable(webview)
+endif()
+
+# Core algorithm source files (shared between CLI, GUI and Tests)
 set(CORE_SOURCES
     src/annealing.cpp
     src/annealing_p.cpp
@@ -50,20 +75,22 @@ set(CORE_SOURCES
 # Target 1: CLI Application
 add_executable(tsp ${CORE_SOURCES} src/main.cpp)
 
-# Target 2: Desktop GUI Application
-set(GUI_SOURCES
-    ${CORE_SOURCES}
-    src/gui/app_controller.cpp
-    src/gui/main_gui.cpp
-)
+# Target 2: Desktop GUI Application (when supported)
+if(CAN_BUILD_GUI)
+    set(GUI_SOURCES
+        ${CORE_SOURCES}
+        src/gui/app_controller.cpp
+        src/gui/main_gui.cpp
+    )
 
-add_executable(tsp-gui ${GUI_SOURCES})
-target_include_directories(tsp-gui PRIVATE src src/gui)
-target_link_libraries(tsp-gui PRIVATE webview::core nlohmann_json::nlohmann_json)
+    add_executable(tsp-gui ${GUI_SOURCES})
+    target_include_directories(tsp-gui PRIVATE src src/gui)
+    target_link_libraries(tsp-gui PRIVATE webview::core nlohmann_json::nlohmann_json)
 
-if(UNIX AND NOT APPLE)
-    find_package(Threads REQUIRED)
-    target_link_libraries(tsp-gui PRIVATE Threads::Threads)
+    if(UNIX AND NOT APPLE)
+        find_package(Threads REQUIRED)
+        target_link_libraries(tsp-gui PRIVATE Threads::Threads)
+    endif()
 endif()
 
 # Target 3: Test Suite
@@ -77,5 +104,6 @@ add_executable(tsp-test ${TEST_SOURCES})
 target_include_directories(tsp-test PRIVATE src src/gui)
 target_link_libraries(tsp-test PRIVATE nlohmann_json::nlohmann_json)
 if(UNIX AND NOT APPLE)
+    find_package(Threads REQUIRED)
     target_link_libraries(tsp-test PRIVATE Threads::Threads)
 endif()
