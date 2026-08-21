@@ -3,8 +3,9 @@
 [![CMake](https://github.com/vikman90/traveling-salesman/actions/workflows/cmake.yml/badge.svg)](https://github.com/vikman90/traveling-salesman/actions/workflows/cmake.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![C++17](https://img.shields.io/badge/Standard-C%2B%2B17-emerald.svg)](https://en.cppreference.com/w/cpp/17)
+[![Algorithms Guide](https://img.shields.io/badge/Docs-Algorithms%20Guide-purple.svg)](docs/ALGORITHMS.md)
 
-A high-performance C++ solution and interactive desktop visualizer for the **Traveling Salesman Problem (TSP)**. It provides 16 optimization algorithms spanning greedy heuristics, local search descent, evolutionary and genetic algorithms, and parallel metaheuristics.
+A high-performance modern C++17 solution and interactive desktop visualizer for the **Traveling Salesman Problem (TSP)**. It provides 16 optimization algorithms spanning greedy heuristics, local search descent, evolutionary and genetic algorithms, and parallel metaheuristics.
 
 <!-- Screenshot placeholder: replace with your image path (e.g. docs/images/screenshot.png) -->
 <p align="center">
@@ -13,9 +14,31 @@ A high-performance C++ solution and interactive desktop visualizer for the **Tra
 
 ---
 
+## 🏗️ Project Architecture & Modularity
+
+The codebase is organized into cleanly decoupled modules:
+
+```text
+src/
+├── core/         # Core data structures (Cycle, Population) using STL containers & Rule of Zero
+├── algorithms/   # 16 heuristic and evolutionary optimization algorithms
+├── cli/          # High-performance CLI application (main_cli.cpp)
+└── gui/          # Desktop graphical visualizer backend & controller (app_controller, main_gui)
+
+tests/
+├── unit/         # Granular unit tests (Cycle, Population, Invariants)
+├── integration/  # TSPLIB benchmarks & GUI AppController API tests
+└── smoke/        # CLI flag matrix smoke tests
+
+docs/
+└── ALGORITHMS.md # Comprehensive mathematical & educational guide
+```
+
+---
+
 ## 🌟 Applications Overview
 
-The project provides two independent executables built from a unified C++17 core engine:
+The project produces two independent executables built from a unified C++17 core engine:
 
 ### 1. Desktop GUI Visualizer (`tsp-gui`)
 An interactive desktop visualizer powered by native C++ and lightweight WebView (WebKitGTK on Linux, WebView2 on Windows, WKWebView on macOS):
@@ -28,7 +51,7 @@ An interactive desktop visualizer powered by native C++ and lightweight WebView 
 - **Drag & Drop & Export:** Drag any `.tsp` or `.tour` file onto the window, and export solutions as TSPLIB files or high-resolution PNG images.
 
 ### 2. High-Performance CLI (`tsp`)
-The original command-line interface for fast headless execution and batch benchmarking.
+The command-line interface for fast headless execution, scripting, and batch benchmarking.
 
 ```bash
 tsp [-a ALGORITHM [-n REP] [-s SEED] [-m METHOD]] [-c TOUR] [-o TOUR] TSP
@@ -37,6 +60,8 @@ tsp [-a ALGORITHM [-n REP] [-s SEED] [-m METHOD]] [-c TOUR] [-o TOUR] TSP
 ---
 
 ## 🧠 Supported Optimization Algorithms
+
+For in-depth mathematical formulations, pseudocode, and complexity analysis, see the [Educational Algorithms Guide](docs/ALGORITHMS.md).
 
 | Category | Algorithm | CLI Identifier (`-a`) | Parameter Controls |
 | :--- | :--- | :--- | :--- |
@@ -87,10 +112,13 @@ cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release
 ```
 
-The build produces three standalone executables in the `build/` directory:
+The build produces the following targets in `build/`:
 - `build/tsp`: The CLI solver.
 - `build/tsp-gui`: The desktop graphical application.
-- `build/tsp-test`: The engine test suite.
+- `build/tsp-test`: The unified regression engine test suite.
+- `build/unit_tests`: Granular unit test suite.
+- `build/integration_tests`: TSPLIB benchmark and API integration suite.
+- `build/smoke_tests`: CLI smoke test suite.
 
 ---
 
@@ -107,18 +135,34 @@ The build produces three standalone executables in the `build/` directory:
 ./build/tsp -a sa -n 50000 -m invert data/berlin52.tsp
 
 # Run Parallel Genetic Algorithm with star island topology
-./build/tsp -a pga -p 4 -d 50 -n 1000 -g star data/berlin52.tsp
+./build/tsp -a pga -p 4 -d 50 -n 1000 -t star data/berlin52.tsp
 ```
 
 ---
 
 ## 🧪 Testing & Validation
 
+Run all test suites with CTest:
 ```bash
-# Run core algorithm validation suite
-./build/tsp-test
+# Run full automated test suite
+ctest --test-dir build --output-on-failure
+```
 
-# Run headless UI automated end-to-end simulation
+Or run individual target suites directly:
+```bash
+# Unit tests
+./build/test_cycle
+./build/test_population
+./build/test_algorithms_invariants
+
+# Integration tests
+./build/test_tsplib_benchmarks
+./build/test_app_controller
+
+# Smoke tests
+./build/test_cli_smoke
+
+# Headless UI automated end-to-end simulation
 xvfb-run -a ./build/tsp-gui --test-ui
 ```
 
@@ -126,7 +170,8 @@ xvfb-run -a ./build/tsp-gui --test-ui
 
 ## 📖 Documentation
 
-Full Doxygen API documentation: https://vikman90.github.io/traveling-salesman
+- **[Educational Algorithms Guide (docs/ALGORITHMS.md)](docs/ALGORITHMS.md):** Theoretical foundation, pseudocode, and mathematical explanations for all 16 algorithms.
+- **Doxygen API Documentation:** https://vikman90.github.io/traveling-salesman
 
 ---
 

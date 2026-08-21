@@ -1,21 +1,25 @@
-// March 2, 2013
+/**
+ * @file memetic.cpp
+ * @brief Implementation of Memetic Algorithm (MA) for TSP
+ * @author Vikman Fernandez-Castro
+ * @date Created: March 2, 2013
+ * @date Modified: August 2026 (C++17 STL Modernization)
+ */
 
-#include "population.h"
-#include <iostream>
+#include "../core/cycle.h"
+#include "../core/population.h"
+#include "algorithms.h"
 
-using namespace std;
+namespace Algorithms {
 
-namespace Algorithms
-{
+void memetic(Cycle &data, int size, int count, Hybridization hybridization, unsigned int seed) {
+    if (size < 3 || data.getSize() < 3) return;
 
-void memetic(Cycle &data, int size, int count, Hybridization hybridization, unsigned int seed)
-{
     const int nMax = count * data.getSize();
-    int iBest;
     int nEvolves = 0;
-    int best1, best2;
+    int best1 = 0, best2 = 0;
     Cycle &bestCycle = data;
-    mt19937 generator(seed);
+    std::mt19937 generator(seed);
     Population population(size, data, generator);
 
     data.setPath(population[population.bestCycle()]);
@@ -32,9 +36,9 @@ void memetic(Cycle &data, int size, int count, Hybridization hybridization, unsi
             break;
 
         case Everygen_Everychrom:
-            for (int j = 0; j < size; j++)
+            for (int j = 0; j < size; ++j) {
                 i += localSearch(population[j]);
-
+            }
             break;
 
         case Tengen_Twochrom:
@@ -43,24 +47,22 @@ void memetic(Cycle &data, int size, int count, Hybridization hybridization, unsi
                 i += localSearch(population[best1]);
                 i += localSearch(population[best2]);
             }
-
             break;
 
         case Tengen_Everychrom:
-            if (nEvolves % 10 == 0)
-                for (int j = 0; j < size; j++)
+            if (nEvolves % 10 == 0) {
+                for (int j = 0; j < size; ++j) {
                     i += localSearch(population[j]);
+                }
+            }
+            break;
         }
 
-        iBest = population.bestCycle();
-
-        if (population[iBest].getCost() < bestCycle.getCost())
+        int iBest = population.bestCycle();
+        if (population[iBest].getCost() < bestCycle.getCost()) {
             bestCycle.setPath(population[iBest]);
-
-#ifdef PROFILE
-        cout << i << " / " << nMax << ": " << bestCycle.getCost() << endl;
-#endif
+        }
     }
 }
 
-}
+} // namespace Algorithms

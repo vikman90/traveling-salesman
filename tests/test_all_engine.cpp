@@ -1,7 +1,14 @@
-#include <iostream>
+/**
+ * @file test_all_engine.cpp
+ * @brief Unified Engine & Algorithm Validation Test Suite
+ */
+
 #include <cassert>
 #include <iomanip>
-#include "gui/app_controller.h"
+#include <iostream>
+#include <vector>
+
+#include "../src/gui/app_controller.h"
 
 int main() {
     std::cout << "========================================" << std::endl;
@@ -94,7 +101,6 @@ int main() {
     std::cout << std::string(75, '-') << std::endl;
 
     for (const auto &tc : testCases) {
-        // Reset to berlin52
         controller.loadPreset("berlin52");
         auto runRes = controller.runAlgorithm(tc.params);
         assert(runRes["status"] == "ok");

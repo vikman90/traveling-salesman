@@ -28,16 +28,13 @@ jobs:
         sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev xvfb
 
     - name: Configure CMake
-      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
-      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build
-      # Build your program with the given configuration
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
-    - name: Run Core Engine Tests
-      run: ${{github.workspace}}/build/tsp-test
+    - name: Run CTest Multi-Tier Test Suites
+      run: ctest --test-dir ${{github.workspace}}/build --output-on-failure
 
     - name: Run UI Automated Test Suite (Headless)
       run: xvfb-run -a ${{github.workspace}}/build/tsp-gui --test-ui
