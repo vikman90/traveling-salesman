@@ -5,8 +5,8 @@
 #include <vector>
 #include <mutex>
 #include <nlohmann/json.hpp>
-#include "../cycle.h"
-#include "../algorithms.h"
+#include "../core/cycle.h"
+#include "../algorithms/algorithms.h"
 
 class AppController {
 public:
