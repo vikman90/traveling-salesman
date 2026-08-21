@@ -8,6 +8,9 @@
 #define CYCLE_H
 
 #include <random>
+#include <string>
+#include <vector>
+#include <istream>
 
 /**
  * @brief Cycle Class
@@ -84,6 +87,66 @@ public:
      * @return Whether it was written correctly.
      */
     bool saveTour(const char *path) const;
+
+    /**
+     * @brief Save nodes to a TSP file
+     * @param path Path of the destination file.
+     * @return Whether it was written correctly.
+     */
+    bool saveTsp(const char *path) const;
+
+    /**
+     * @brief Load nodes from an input stream
+     * @param stream Input stream with TSP content.
+     * @return Whether it was read correctly.
+     */
+    bool loadTspFromStream(std::istream &stream);
+
+    /**
+     * @brief Load path from an input stream
+     * @param stream Input stream with TOUR content.
+     * @return Whether it was read correctly.
+     */
+    bool loadTourFromStream(std::istream &stream);
+
+    /**
+     * @brief Load nodes from TSP string content
+     * @param content String with TSP content.
+     * @return Whether it was read correctly.
+     */
+    bool loadTspFromString(const std::string &content);
+
+    /**
+     * @brief Load path from TOUR string content
+     * @param content String with TOUR content.
+     * @return Whether it was read correctly.
+     */
+    bool loadTourFromString(const std::string &content);
+
+    /**
+     * @brief Export graph nodes to standard TSPLIB string format
+     * @return TSP file content as string.
+     */
+    std::string getTspString() const;
+
+    /**
+     * @brief Export tour path to standard TSPLIB string format
+     * @return TOUR file content as string.
+     */
+    std::string getTourString() const;
+
+    /**
+     * @brief Set graph vertices from vector
+     * @param newVertices Vector of 2D points.
+     */
+    void setVertices(const std::vector<Vertex> &newVertices);
+
+    /**
+     * @brief Set graph vertices from raw array
+     * @param newSize Number of vertices.
+     * @param newVertices Array of vertices.
+     */
+    void setVertices(int newSize, const Vertex *newVertices);
 
     /**
      * @brief Clear path

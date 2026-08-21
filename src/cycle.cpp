@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <cstdlib>
 #include <cstring>
 #include <cfloat>
@@ -16,70 +17,73 @@
 
 #define LINE_WIDTH 80   /// Maximum length for one line
 
+static void trim(std::string &s)
+{
+    while (!s.empty() && (s.back() == '\r' || s.back() == '\n' || s.back() == ' ' || s.back() == '\t')) {
+        s.pop_back();
+    }
+    size_t start = 0;
+    while (start < s.size() && (s[start] == ' ' || s[start] == '\t')) {
+        start++;
+    }
+    if (start > 0) {
+        s = s.substr(start);
+    }
+}
+
 //------------------------------------------------------------------------------
 
 /**
- * @brief Get the value of a tag in a file
+ * @brief Get the value of a tag in a stream
  * @param file Data stream.
  * @param result String where the result will be stored.
  * @param label Label to be searched.
- *
- * A label (word before ':') is searched for and the rest of the line is written
- * to the result string. The search starts at the beginning of the file, and the
- * pointer stays at the beginning of the next line.
- *
  * @return Whether the tag was found.
  */
-static bool fileTag(std::ifstream &file, char *result, const char *label)
+static bool fileTag(std::istream &file, char *result, const char *label)
 {
-    using namespace std;
+    file.clear();
+    file.seekg(0, std::ios_base::beg);
 
-    char _str[LINE_WIDTH];
-    size_t length = strlen(label);
-
-    file.seekg(0, ios_base::beg);
-
-    do {
-        file.getline(_str, LINE_WIDTH, ':');
-        _str[length] = '\0';
-
-        if (strcmp(_str, label))
-            file.ignore(LINE_WIDTH, '\n');
-        else {
-            file.getline(result, LINE_WIDTH);
-            return true;
+    std::string line;
+    std::string target(label);
+    while (std::getline(file, line)) {
+        size_t colon = line.find(':');
+        if (colon != std::string::npos) {
+            std::string tag = line.substr(0, colon);
+            trim(tag);
+            if (tag == target) {
+                std::string val = line.substr(colon + 1);
+                trim(val);
+                strncpy(result, val.c_str(), LINE_WIDTH - 1);
+                result[LINE_WIDTH - 1] = '\0';
+                return true;
+            }
         }
-    } while (!file.fail());
+    }
 
-    cerr << "Reading error: label <" << label << "> not found.\n";
+    std::cerr << "Reading error: label <" << label << "> not found.\n";
     return false;
 }
 
 //------------------------------------------------------------------------------
 
 /**
- * @brief Check an attribute in a file
+ * @brief Check an attribute in a stream
  * @param file Data flow.
  * @param attrib Name of the attribute (tag).
  * @param value Value that the attribute is expected to have.
  * @return Whether the tag was found and the value matches.
  */
-static bool fileAssert(std::ifstream &file, const char *attrib, const char *value)
+static bool fileAssert(std::istream &file, const char *attrib, const char *value)
 {
-    char _str[LINE_WIDTH];
-    char *_ptr = _str;
-
-    if (!fileTag(file, _str, attrib))
+    char result[LINE_WIDTH];
+    if (!fileTag(file, result, attrib))
         return false;
 
-    while (*_ptr == ' ')
-        _ptr++;
-
-    file.unget();
-
-    if (strcmp(_ptr, value)) {
+    if (strcmp(result, value) != 0) {
         std::cerr << "Read error: Expected <" << attrib << "=="
-                  << value << "> and got <" << _str << ">\n";
+                  << value << "> and got <" << result << ">\n";
         return false;
     }
 
@@ -89,27 +93,26 @@ static bool fileAssert(std::ifstream &file, const char *attrib, const char *valu
 //------------------------------------------------------------------------------
 
 /**
- * @brief Find a line within a file
+ * @brief Find a line within a stream
  * @param file Data flow.
  * @param line Line to search for.
  * @post The pointer is placed at the beginning of the next line.
  * @return whether the line was found.
  */
-static bool fileFindLine(std::ifstream &file, const char *line)
+static bool fileFindLine(std::istream &file, const char *line)
 {
-    using namespace std;
-    char _str[LINE_WIDTH];
+    file.clear();
+    file.seekg(0, std::ios_base::beg);
 
-    file.seekg(0, ios_base::beg);
-
-    do {
-        file.getline(_str, LINE_WIDTH);
-
-        if (!strcmp(_str, line))
+    std::string target(line);
+    std::string current;
+    while (std::getline(file, current)) {
+        trim(current);
+        if (current == target)
             return true;
-    } while (!file.fail());
+    }
 
-    cerr << "Error de lectura: texto <" << line << "> no encontrado.\n";
+    std::cerr << "Error de lectura: texto <" << line << "> no encontrado.\n";
     return false;
 }
 
@@ -219,17 +222,24 @@ Cycle & Cycle::operator=(const Cycle &other)
 
 bool Cycle::loadTsp(const char *path)
 {
+    std::ifstream file(path);
+    if (!file) {
+        std::cerr << "Could not open file " << path << std::endl;
+        return false;
+    }
+    return loadTspFromStream(file);
+}
+
+//------------------------------------------------------------------------------
+// Load nodes from a stream
+
+bool Cycle::loadTspFromStream(std::istream &file)
+{
     using namespace std;
     int newSize;
     char _str[LINE_WIDTH];
-    ifstream file(path);
 
-    if (!file) {
-        cerr << "Could not open file " << path << endl;
-        return false;
-    }
-
-    // Cabecera
+    // Header
 
     if (!fileAssert(file, "TYPE", "TSP"))
         return false;
@@ -255,23 +265,33 @@ bool Cycle::loadTsp(const char *path)
     if (!fileAssert(file, "EDGE_WEIGHT_TYPE", "EUC_2D"))
         return false;
 
-    // Leer vértices
+    // Read vertices
 
     if (!fileFindLine(file, "NODE_COORD_SECTION"))
         return false;
 
     for (int i = 0; i < size; i++) {
-        file.ignore(LINE_WIDTH, ' ');
-        file >> vertices[i].x >> vertices[i].y;
-        file.ignore(LINE_WIDTH, '\n');
+        int id;
+        if (!(file >> id >> vertices[i].x >> vertices[i].y)) {
+            cerr << "Reading error: could not read vertex " << (i + 1) << "\n";
+            return false;
+        }
     }
 
     cost = FLT_MAX;
     memset(edges, 0, sizeof(int) * size);
-    file.close();
     updateDistances();
 
     return true;
+}
+
+//------------------------------------------------------------------------------
+// Load nodes from a string
+
+bool Cycle::loadTspFromString(const std::string &content)
+{
+    std::istringstream stream(content);
+    return loadTspFromStream(stream);
 }
 
 //------------------------------------------------------------------------------
@@ -279,15 +299,22 @@ bool Cycle::loadTsp(const char *path)
 
 bool Cycle::loadTour(const char *path)
 {
+    std::ifstream file(path);
+    if (!file) {
+        std::cerr << "No se pudo abrir el archivo " << path << std::endl;
+        return false;
+    }
+    return loadTourFromStream(file);
+}
+
+//------------------------------------------------------------------------------
+// Load path from a stream
+
+bool Cycle::loadTourFromStream(std::istream &file)
+{
     using namespace std;
     int _size;
     char _str[LINE_WIDTH];
-    ifstream file(path);
-
-    if (!file) {
-        cerr << "No se pudo abrir el archivo " << path << endl;
-        return false;
-    }
 
     // Head
 
@@ -301,7 +328,6 @@ bool Cycle::loadTour(const char *path)
 
     if (_size != size) {
         cerr << "Reading error: the path dimension is incorrect.\n";
-        file.close();
         return false;
     }
 
@@ -311,19 +337,24 @@ bool Cycle::loadTour(const char *path)
         return false;
 
     for (int i = 0; i < size; i++) {
-        file >> edges[i];
+        if (!(file >> edges[i])) {
+            cerr << "Error de lectura: faltan nodos.\n";
+            return false;
+        }
         edges[i]--;
     }
 
-    if (!file) {
-        cerr << "Error de lectura: faltan nodos.\n";
-        file.close();
-        return false;
-    }
-
-    file.close();
     updateCost();
     return true;
+}
+
+//------------------------------------------------------------------------------
+// Load path from a string
+
+bool Cycle::loadTourFromString(const std::string &content)
+{
+    std::istringstream stream(content);
+    return loadTourFromStream(stream);
 }
 
 //------------------------------------------------------------------------------
@@ -331,36 +362,92 @@ bool Cycle::loadTour(const char *path)
 
 bool Cycle::saveTour(const char *path) const
 {
-    using namespace std;
-    ofstream file(path);
-
+    std::ofstream file(path);
     if (!file) {
-        cerr << "No se pudo abrir el archivo " << path << endl;
+        std::cerr << "No se pudo abrir el archivo " << path << std::endl;
         return false;
     }
+    file << getTourString();
+    return file.good();
+}
 
-    // Head
+//------------------------------------------------------------------------------
+// Save nodes to a TSP file
 
-    file << "NAME : " << path << endl;
-    file << "TYPE : TOUR\n";
-    file << "DIMENSION : " << size << endl;
-    file << "TOUR_SECTION\n";
-
-    // List of node indexes (edges)
-
-    for (int i = 0; i < size; i++)
-        file << edges[i] + 1 << endl;
-
-    file << "EOF";
-
+bool Cycle::saveTsp(const char *path) const
+{
+    std::ofstream file(path);
     if (!file) {
-        cerr << "Error de escritura en archivo.\n";
-        file.close();
+        std::cerr << "No se pudo abrir el archivo " << path << std::endl;
         return false;
     }
+    file << getTspString();
+    return file.good();
+}
 
-    file.close();
-    return true;
+//------------------------------------------------------------------------------
+// Export TSP as string
+
+std::string Cycle::getTspString() const
+{
+    std::ostringstream out;
+    out << "NAME : problem\n";
+    out << "TYPE : TSP\n";
+    out << "DIMENSION : " << size << "\n";
+    out << "EDGE_WEIGHT_TYPE : EUC_2D\n";
+    out << "NODE_COORD_SECTION\n";
+    for (int i = 0; i < size; i++) {
+        out << (i + 1) << " " << vertices[i].x << " " << vertices[i].y << "\n";
+    }
+    out << "EOF\n";
+    return out.str();
+}
+
+//------------------------------------------------------------------------------
+// Export TOUR as string
+
+std::string Cycle::getTourString() const
+{
+    std::ostringstream out;
+    out << "NAME : solution.tour\n";
+    out << "TYPE : TOUR\n";
+    out << "DIMENSION : " << size << "\n";
+    out << "TOUR_SECTION\n";
+    for (int i = 0; i < size; i++) {
+        out << (edges[i] + 1) << "\n";
+    }
+    out << "EOF\n";
+    return out.str();
+}
+
+//------------------------------------------------------------------------------
+// Set vertices
+
+void Cycle::setVertices(const std::vector<Vertex> &newVertices)
+{
+    setVertices(static_cast<int>(newVertices.size()), newVertices.data());
+}
+
+void Cycle::setVertices(int newSize, const Vertex *newVertices)
+{
+    if (newSize > size) {
+        vertices = (Vertex*)realloc(vertices, sizeof(Vertex) * newSize);
+        edges = (int*)realloc(edges, sizeof(int) * newSize);
+        distances = (float*)realloc(distances, sizeof(float) * newSize * newSize);
+    }
+
+    size = newSize;
+
+    if (newVertices && size > 0) {
+        memcpy(vertices, newVertices, sizeof(Vertex) * size);
+    }
+
+    for (int i = 0; i < size; i++) {
+        edges[i] = i;
+    }
+
+    updateDistances();
+    updateCost();
 }
 
 //------------------------------------------------------------------------------
@@ -421,7 +508,7 @@ void Cycle::shufflePath(std::mt19937 &generator)
 
         j = Algorithms::random(generator, i + 1);
 
-        register int auxEdge = edges[j];
+        int auxEdge = edges[j];
         edges[j] = edges[i];
         edges[i] = auxEdge;
     }
@@ -460,7 +547,7 @@ void Cycle::shuffleSubpath(int count, std::mt19937 &generator)
 
         j = Algorithms::random(generator, i + 1);
 
-        register int auxEdge = edges[begin + j];
+        int auxEdge = edges[begin + j];
         edges[begin + j] = edges[begin + i];
         edges[begin + i] = auxEdge;
     }
@@ -479,7 +566,7 @@ void Cycle::invertSubpath(int first, int count)
     cost -= distance(edges[(first + size - 1) % size], edges[first]) + distance(edges[last], edges[last + 1]);
 
     for (int i = 0; i < middle; i++) {
-        register int auxEdge = edges[first + i];
+        int auxEdge = edges[first + i];
         edges[first + i] = edges[last - i];
         edges[last - i] = auxEdge;
     }
@@ -518,7 +605,7 @@ void Cycle::swap(int i, int j)
 
     // Swap noded
 
-    register int auxEdge = edges[i];
+    int auxEdge = edges[i];
     edges[i] = edges[j];
     edges[j] = auxEdge;
 }
@@ -533,8 +620,8 @@ void Cycle::updateDistances()
             if (i == j)
                 distances[i * size + j] = 0.0;
             else {
-                register float x = vertices[i].x - vertices[j].x;
-                register float y = vertices[i].y - vertices[j].y;
+                float x = vertices[i].x - vertices[j].x;
+                float y = vertices[i].y - vertices[j].y;
                 distances[i * size + j] = distances[j * size + i] = floor(sqrt(x * x + y * y));
             }
         }

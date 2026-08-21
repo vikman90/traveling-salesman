@@ -27,7 +27,7 @@ enum Topology { Star, Ring };
 // Integer in the range [0, max[
 inline int random(std::mt19937 &generator, int max)
 {
-    register unsigned int value;
+    unsigned int value;
 
     do {
         value = generator();
