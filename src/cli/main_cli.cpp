@@ -1,6 +1,9 @@
 /**
  * @file main_cli.cpp
- * @brief High-performance Command Line Interface for the TSP Solver
+ * @brief Command Line Interface (CLI) for the Traveling Salesman Problem solver
+ * @author Vikman Fernandez-Castro
+ * @date Created: October 22, 2012
+ * @date Modified: August 2026 (C++17 STL Modernization)
  */
 
 #include <chrono>

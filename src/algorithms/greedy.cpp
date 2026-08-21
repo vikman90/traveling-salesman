@@ -1,6 +1,9 @@
 /**
  * @file greedy.cpp
- * @brief Implementation of the Nearest Neighbor Greedy constructive heuristic
+ * @brief Implementation of Greedy Nearest Neighbor Heuristic
+ * @author Vikman Fernandez-Castro
+ * @date Created: October 23, 2012
+ * @date Modified: August 2026 (C++17 STL Modernization)
  */
 
 #include <cfloat>

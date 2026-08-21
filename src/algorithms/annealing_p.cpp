@@ -1,6 +1,9 @@
 /**
  * @file annealing_p.cpp
- * @brief Implementation of Parallel Simulated Annealing (multi-trajectory cooperative model)
+ * @brief Implementation of Parallel Simulated Annealing (PSA)
+ * @author Vikman Fernandez-Castro
+ * @date Created: March 3, 2013
+ * @date Modified: August 2026 (C++17 STL Modernization)
  */
 
 #include <vector>

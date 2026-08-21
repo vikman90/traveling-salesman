@@ -1,6 +1,9 @@
 /**
  * @file ils.cpp
  * @brief Implementation of Iterated Local Search (ILS)
+ * @author Vikman Fernandez-Castro
+ * @date Created: January 8, 2013
+ * @date Modified: August 2026 (C++17 STL Modernization)
  */
 
 #include <algorithm>

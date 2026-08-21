@@ -1,6 +1,9 @@
 /**
  * @file algorithms.h
  * @brief Declarations and definitions of TSP heuristic and metaheuristic algorithms
+ * @author Vikman Fernandez-Castro
+ * @date Created: October 23, 2012
+ * @date Modified: August 2026 (C++17 STL Modernization)
  */
 
 #ifndef TSP_ALGORITHMS_H

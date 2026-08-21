@@ -1,6 +1,9 @@
 /**
  * @file genetic.cpp
  * @brief Implementation of Genetic Algorithm (GA) for TSP
+ * @author Vikman Fernandez-Castro
+ * @date Created: March 1, 2013
+ * @date Modified: August 2026 (C++17 STL Modernization)
  */
 
 #include <iostream>

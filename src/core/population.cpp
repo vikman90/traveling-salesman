@@ -1,6 +1,9 @@
 /**
  * @file population.cpp
  * @brief Implementation of the Population class
+ * @author Vikman Fernandez-Castro
+ * @date Created: February 28, 2013
+ * @date Modified: August 2026 (C++17 STL Modernization)
  */
 
 #include "population.h"

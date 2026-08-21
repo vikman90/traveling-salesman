@@ -1,6 +1,9 @@
 /**
  * @file cycle.cpp
  * @brief Implementation of the Cycle class
+ * @author Vikman Fernandez-Castro
+ * @date Created: October 22, 2012
+ * @date Modified: August 2026 (C++17 STL Modernization)
  */
 
 #include "cycle.h"

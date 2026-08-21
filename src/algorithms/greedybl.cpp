@@ -1,6 +1,9 @@
 /**
  * @file greedybl.cpp
- * @brief Implementation of Greedy with Local Search and Extended Greedy
+ * @brief Implementation of Greedy + Local Search and Extended Greedy Search
+ * @author Vikman Fernandez-Castro
+ * @date Created: January 7, 2013
+ * @date Modified: August 2026 (C++17 STL Modernization)
  */
 
 #include <algorithm>

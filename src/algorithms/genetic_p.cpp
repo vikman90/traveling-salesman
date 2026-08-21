@@ -1,6 +1,9 @@
 /**
  * @file genetic_p.cpp
- * @brief Implementation of Parallel Genetic Algorithm with Island Migration Models
+ * @brief Implementation of Parallel Genetic Algorithm (PGA) Island Model
+ * @author Vikman Fernandez-Castro
+ * @date Created: March 3, 2013
+ * @date Modified: August 2026 (C++17 STL Modernization)
  */
 
 #include <cfloat>

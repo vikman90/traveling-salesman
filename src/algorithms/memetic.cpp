@@ -1,6 +1,9 @@
 /**
  * @file memetic.cpp
- * @brief Implementation of Memetic Algorithm (GA + 2-Opt Local Search Hybridization)
+ * @brief Implementation of Memetic Algorithm (MA) for TSP
+ * @author Vikman Fernandez-Castro
+ * @date Created: March 2, 2013
+ * @date Modified: August 2026 (C++17 STL Modernization)
  */
 
 #include "../core/cycle.h"

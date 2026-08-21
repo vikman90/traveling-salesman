@@ -1,6 +1,9 @@
 /**
  * @file bmb.cpp
- * @brief Implementation of Basic Multiboot (BMB) search
+ * @brief Implementation of Basic Multiboot (BMB) Search
+ * @author Vikman Fernandez-Castro
+ * @date Created: January 7, 2013
+ * @date Modified: August 2026 (C++17 STL Modernization)
  */
 
 #include "../core/cycle.h"

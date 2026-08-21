@@ -1,6 +1,9 @@
 /**
  * @file descendantsearch.cpp
  * @brief Implementation of Variable Neighborhood Descent (VND)
+ * @author Vikman Fernandez-Castro
+ * @date Created: November 7, 2012
+ * @date Modified: August 2026 (C++17 STL Modernization)
  */
 
 #include "../core/cycle.h"

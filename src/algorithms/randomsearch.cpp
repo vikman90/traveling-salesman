@@ -1,6 +1,9 @@
 /**
  * @file randomsearch.cpp
- * @brief Implementation of Pure Random Search heuristic
+ * @brief Implementation of Pure Random Search
+ * @author Vikman Fernandez-Castro
+ * @date Created: October 23, 2012
+ * @date Modified: August 2026 (C++17 STL Modernization)
  */
 
 #include "../core/cycle.h"

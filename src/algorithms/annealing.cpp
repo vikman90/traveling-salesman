@@ -1,6 +1,9 @@
 /**
  * @file annealing.cpp
  * @brief Implementation of Simulated Annealing (SA) metaheuristic
+ * @author Vikman Fernandez-Castro
+ * @date Created: December 3, 2012
+ * @date Modified: August 2026 (C++17 STL Modernization)
  */
 
 #include <cmath>

@@ -1,6 +1,9 @@
 /**
  * @file cycle.h
  * @brief Declaration of the Cycle class representing a TSP Hamiltonian cycle
+ * @author Vikman Fernandez-Castro
+ * @date Created: October 22, 2012
+ * @date Modified: August 2026 (C++17 STL Modernization)
  */
 
 #ifndef TSP_CORE_CYCLE_H

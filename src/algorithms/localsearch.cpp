@@ -1,6 +1,9 @@
 /**
  * @file localsearch.cpp
- * @brief Implementation of 2-Opt Local Search
+ * @brief Implementation of 2-Opt Local Search (First Improvement)
+ * @author Vikman Fernandez-Castro
+ * @date Created: October 24, 2012
+ * @date Modified: August 2026 (C++17 STL Modernization)
  */
 
 #include "../core/cycle.h"

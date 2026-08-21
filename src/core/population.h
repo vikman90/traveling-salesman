@@ -1,6 +1,9 @@
 /**
  * @file population.h
  * @brief Declaration of the Population class for evolutionary TSP algorithms
+ * @author Vikman Fernandez-Castro
+ * @date Created: February 28, 2013
+ * @date Modified: August 2026 (C++17 STL Modernization)
  */
 
 #ifndef TSP_CORE_POPULATION_H
