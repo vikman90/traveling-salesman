@@ -176,7 +176,15 @@ int main() {
         std::cout << "  ✓ [16/17] ma invariant verified" << std::endl;
     }
 
-    // 17. Parallel Metaheuristics (PSA & PGA)
+    // 17. Scatter Search (Búsqueda Dispersa)
+    {
+        Cycle c = baseGraph;
+        Algorithms::scatterSearch(c, 20, 42);
+        verifyPermutationInvariant(c, N, "scatter");
+        std::cout << "  ✓ [17/18] scatter search invariant verified" << std::endl;
+    }
+
+    // 18. Parallel Metaheuristics (PSA & PGA)
     {
         Cycle cPSA = baseGraph;
         Algorithms::parallelAnnealing(cPSA, 3, 10, 2, 42);
@@ -188,9 +196,9 @@ int main() {
 
         Algorithms::parallelGenetic(cPGA, 3, 10, 10, 2, Algorithms::Star, 42);
         verifyPermutationInvariant(cPGA, N, "pga_star");
-        std::cout << "  ✓ [17/17] psa & pga invariants verified" << std::endl;
+        std::cout << "  ✓ [18/18] psa & pga invariants verified" << std::endl;
     }
 
-    std::cout << "🎉 ALL 17 ALGORITHM INVARIANTS PASSED!\n" << std::endl;
+    std::cout << "🎉 ALL 18 ALGORITHM INVARIANTS PASSED!\n" << std::endl;
     return 0;
 }

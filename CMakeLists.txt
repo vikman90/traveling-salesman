@@ -84,6 +84,7 @@ set(ALGORITHM_SOURCES
     src/algorithms/localsearch.cpp
     src/algorithms/memetic.cpp
     src/algorithms/randomsearch.cpp
+    src/algorithms/scatter.cpp
     src/algorithms/tabusearch.cpp
     src/algorithms/vns.cpp
 )
@@ -117,6 +118,11 @@ if(CAN_BUILD_GUI)
         target_link_libraries(tsp-gui PRIVATE Threads::Threads)
     endif()
 endif()
+
+# Target 3: Automated Statistical Benchmark Runner
+add_executable(tsp-benchmark src/tools/benchmark_runner.cpp)
+target_include_directories(tsp-benchmark PRIVATE src)
+target_link_libraries(tsp-benchmark PRIVATE tsp_algorithms)
 
 # ------------------------------------------------------------------------------
 # Testing Scaffolding (CTest)
@@ -170,4 +176,7 @@ if(BUILD_TESTS)
         target_link_libraries(tsp-test PRIVATE Threads::Threads)
     endif()
     add_test(NAME Regression_EngineSuite COMMAND tsp-test)
+
+    # Integration Tests: Automated Benchmark Runner Smoke
+    add_test(NAME Integration_BenchmarkSuite COMMAND tsp-benchmark --quick)
 endif()

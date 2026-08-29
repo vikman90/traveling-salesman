@@ -56,17 +56,39 @@ void tabuSearch(Cycle &data, int count, std::mt19937 &generator) {
     int tabuTenure = std::max(1, n / 2);
     std::deque<TabuEntry> tabuList;
 
-    // Long-term memory: frequency of city u assigned to position l in accepted solutions
-    std::vector<std::vector<int>> freq(n, std::vector<int>(n, 0));
+    // Precalculate min and max Euclidean distances in the graph
+    float dMin = std::numeric_limits<float>::max();
+    float dMax = 0.0f;
+    for (int i = 0; i < n; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            float dist = data.distance(i, j);
+            if (dist < dMin) dMin = dist;
+            if (dist > dMax) dMax = dist;
+        }
+    }
+
+    // Long-term memory: frequency of undirected edges (u, v) in accepted solutions
+    std::vector<std::vector<int>> frec(n, std::vector<int>(n, 0));
+    int frecMax = 0;
+
+    auto updateEdgeFrequencies = [&](const Cycle &c) {
+        for (int l = 0; l < n; ++l) {
+            int u = c.edgeAt(l);
+            int v = c.edgeAt((l + 1) % n);
+            frec[u][v]++;
+            frec[v][u]++;
+            if (frec[u][v] > frecMax) {
+                frecMax = frec[u][v];
+            }
+        }
+    };
 
     Cycle curCycle = data;
     curCycle.shufflePath(generator);
     Cycle bestCycle = curCycle;
 
-    // Record initial configuration in frequency table
-    for (int l = 0; l < n; ++l) {
-        freq[l][curCycle.edgeAt(l)]++;
-    }
+    // Record initial configuration
+    updateEdgeFrequencies(curCycle);
 
     std::uniform_real_distribution<double> uniform01(0.0, 1.0);
 
@@ -81,31 +103,35 @@ void tabuSearch(Cycle &data, int count, std::mt19937 &generator) {
                 // Strategy 2 (25%): Best solution obtained so far
                 curCycle.setPath(bestCycle);
             } else {
-                // Strategy 3 (50%): Long-term memory greedy diversification
-                std::vector<bool> availL(n, true);
-                std::vector<bool> availU(n, true);
+                // Strategy 3 (50%): Long-term memory greedy diversification on penalized distances d'
+                const float mu = 0.3f;
+                const float range = (dMax - dMin);
+                const float fMax = std::max(1, frecMax);
 
-                for (int step = 0; step < n; ++step) {
-                    int minFreq = std::numeric_limits<int>::max();
-                    int bestL = -1;
-                    int bestU = -1;
+                std::vector<bool> visited(n, false);
+                int startCity = random(generator, n);
+                curCycle.edgeAt(0) = startCity;
+                visited[startCity] = true;
 
-                    for (int l = 0; l < n; ++l) {
-                        if (!availL[l]) continue;
-                        for (int u = 0; u < n; ++u) {
-                            if (!availU[u]) continue;
-                            if (freq[l][u] < minFreq) {
-                                minFreq = freq[l][u];
-                                bestL = l;
-                                bestU = u;
+                for (int step = 1; step < n; ++step) {
+                    int last = curCycle.edgeAt(step - 1);
+                    float bestPenalizedDist = std::numeric_limits<float>::max();
+                    int nextCity = -1;
+
+                    for (int cand = 0; cand < n; ++cand) {
+                        if (!visited[cand]) {
+                            float penalty = mu * range * (static_cast<float>(frec[last][cand]) / fMax);
+                            float dPrime = data.distance(last, cand) + penalty;
+                            if (dPrime < bestPenalizedDist) {
+                                bestPenalizedDist = dPrime;
+                                nextCity = cand;
                             }
                         }
                     }
 
-                    if (bestL != -1 && bestU != -1) {
-                        curCycle.edgeAt(bestL) = bestU;
-                        availL[bestL] = false;
-                        availU[bestU] = false;
+                    if (nextCity != -1) {
+                        curCycle.edgeAt(step) = nextCity;
+                        visited[nextCity] = true;
                     }
                 }
                 curCycle.updateCost();
@@ -202,10 +228,8 @@ void tabuSearch(Cycle &data, int count, std::mt19937 &generator) {
                 tabuList.pop_front();
             }
 
-            // Update frequency matrix for long-term memory
-            for (int l = 0; l < n; ++l) {
-                freq[l][curCycle.edgeAt(l)]++;
-            }
+            // Update edge frequency matrix for long-term memory
+            updateEdgeFrequencies(curCycle);
         }
     }
 

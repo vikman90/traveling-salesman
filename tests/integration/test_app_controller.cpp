@@ -63,7 +63,7 @@ int main() {
     // 5. Algorithm Execution via JSON API
     std::vector<std::string> algos = {
         "greedy", "rs", "ls", "vnd", "sa", "greedyls", "greedyls+",
-        "bmb", "grasp", "grasp+", "ils", "vns", "tabu", "ga", "ma", "psa", "pga"
+        "bmb", "grasp", "grasp+", "ils", "vns", "tabu", "ga", "ma", "scatter", "psa", "pga"
     };
 
     for (const auto &algo : algos) {

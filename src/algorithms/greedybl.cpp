@@ -20,15 +20,17 @@ void greedy_bl(Cycle &data) {
 void greedy_blext(Cycle &data, int count, unsigned int seed) {
     const int s = std::max(2, data.getSize() / 4);
     std::mt19937 generator(seed);
-    Cycle greedyCycle = data;
-    Cycle curCycle = data;
     Cycle bestCycle = data;
+    Cycle curCycle = data;
 
-    bestCycle.clearPath();
-    greedy(greedyCycle);
+    // 1. Initial deterministic greedy tour + first Local Search (1st BL)
+    greedy(bestCycle);
+    localSearch(bestCycle);
 
-    for (int k = 0; k < count; ++k) {
-        curCycle.setPath(greedyCycle);
+    // 2. Perform (count - 1) iterative perturbation + local search cycles (default count=5 -> 4 cycles)
+    const int numCycles = std::max(0, count - 1);
+    for (int k = 0; k < numCycles; ++k) {
+        curCycle.setPath(bestCycle);
         curCycle.shuffleSubpath(s, generator);
         localSearch(curCycle);
 

@@ -80,14 +80,16 @@ void Population::evolve(Algorithms::Scheme scheme) {
 
     switch (scheme) {
     case Algorithms::Generational: {
-        Cycle best = chromosomes[bestCycle()];
+        Cycle bestPrev = chromosomes[bestCycle()];
+        std::vector<Cycle> offspring;
+        offspring.reserve(size);
 
-        for (int iLast = size; iLast > 2; iLast -= 2) {
-            int iFather = select(iLast);
-            int iMother;
-            do {
-                iMother = select(iLast);
-            } while (iFather == iMother);
+        while (static_cast<int>(offspring.size()) < size) {
+            int iFather = select(size);
+            int iMother = select(size);
+            while (iFather == iMother && size > 1) {
+                iMother = select(size);
+            }
 
             Cycle son;
             Cycle daughter;
@@ -107,22 +109,29 @@ void Population::evolve(Algorithms::Scheme scheme) {
                 daughter.shuffleSubpath(std::max(2, daughter.getSize() / 8), *generator);
             }
 
-            replace(iFather, iMother, son, daughter, iLast);
+            offspring.push_back(std::move(son));
+            if (static_cast<int>(offspring.size()) < size) {
+                offspring.push_back(std::move(daughter));
+            }
         }
 
-        int iWorst = worstCycle();
-        if (best.getCost() < chromosomes[iWorst].getCost()) {
-            chromosomes[iWorst].setPath(best);
+        chromosomes = std::move(offspring);
+
+        // Elitism: ensure previous best is preserved if lost or strictly better than new best
+        int iBest = bestCycle();
+        if (bestPrev.getCost() < chromosomes[iBest].getCost()) {
+            int iWorst = worstCycle();
+            chromosomes[iWorst].setPath(bestPrev);
         }
         break;
     }
 
     case Algorithms::Stationary: {
         int iFather = select(size);
-        int iMother;
-        do {
+        int iMother = select(size);
+        while (iFather == iMother && size > 1) {
             iMother = select(size);
-        } while (iFather == iMother);
+        }
 
         Cycle son = cross(iFather, iMother);
         Cycle daughter = cross(iMother, iFather);
@@ -151,34 +160,44 @@ Cycle Population::cross(int iFather, int iMother) {
     const Cycle &father = chromosomes[iFather];
     const Cycle &mother = chromosomes[iMother];
 
-    int bound1 = Algorithms::random(*generator, n - 2) + 1;
-    int bound2 = Algorithms::random(*generator, n - bound1 - 1) + bound1 + 1;
-    int ptr = bound1;
+    if (n < 3) return father;
 
-    Cycle son = father;
-    std::unordered_set<int> bounded;
-    bounded.reserve(bound2 - bound1);
-
-    for (int i = bound1; i < bound2; ++i) {
-        bounded.insert(father.edgeAt(i));
+    int bound1 = Algorithms::random(*generator, n);
+    int bound2 = Algorithms::random(*generator, n);
+    while (bound1 == bound2) {
+        bound2 = Algorithms::random(*generator, n);
+    }
+    if (bound1 > bound2) {
+        std::swap(bound1, bound2);
     }
 
-    for (int i = 0; i < n; ++i) {
-        int edge = mother.edgeAt(i);
-        if (bounded.find(edge) != bounded.end()) {
-            son.edgeAt(ptr++) = edge;
+    Cycle son = father;
+    std::vector<bool> inSwath(n, false);
+
+    // 1. Copy swath [bound1, bound2] from father
+    for (int i = bound1; i <= bound2; ++i) {
+        int node = father.edgeAt(i);
+        son.edgeAt(i) = node;
+        inSwath[node] = true;
+    }
+
+    // 2. Fill remaining positions circularly from mother starting after bound2
+    int sonIdx = (bound2 + 1) % n;
+    int motherIdx = (bound2 + 1) % n;
+
+    for (int count = 0; count < n; ++count) {
+        int candidate = mother.edgeAt((motherIdx + count) % n);
+        if (!inSwath[candidate]) {
+            son.edgeAt(sonIdx) = candidate;
+            sonIdx = (sonIdx + 1) % n;
+            if (sonIdx == bound1) {
+                sonIdx = (bound2 + 1) % n;
+            }
         }
     }
 
     son.updateCost();
     return son;
-}
-
-void Population::replace(int iFather, int iMother, Cycle &son, Cycle &daughter, int iLast) {
-    chromosomes[iFather].setPath(chromosomes[iLast - 2]);
-    chromosomes[iMother].setPath(chromosomes[iLast - 1]);
-    chromosomes[iLast - 2].setPath(son);
-    chromosomes[iLast - 1].setPath(daughter);
 }
 
 void Population::replace(Cycle &son, Cycle &daughter) {

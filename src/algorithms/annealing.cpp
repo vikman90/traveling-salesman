@@ -11,12 +11,12 @@
 #include "algorithms.h"
 
 namespace {
-constexpr double P = 0.249175;   ///< Initial temperature factor
-constexpr int NCOOL = 20;        ///< Iterations per temperature stage
-constexpr double TEMPEND = 0.1;  ///< Final minimum temperature
+constexpr double P = 0.249175;     ///< Initial temperature factor (mu / -ln(phi) with mu=0.3, phi=0.3)
+constexpr int NCOOL = 20;          ///< Iterations per temperature stage (epoch length L)
+constexpr double TEMPEND = 0.001;  ///< Final minimum temperature (T_f = 10^-3)
 
 inline bool accept(double delta, double temperature, std::mt19937 &gen) {
-    if (delta < 0.0) return true;
+    if (delta <= 0.0) return true;
     std::uniform_real_distribution<double> dist(0.0, 1.0);
     return dist(gen) < std::exp(-delta / temperature);
 }
@@ -35,10 +35,11 @@ void simulatedAnnealing(Cycle &data, int count, std::mt19937 &generator, Neighbo
     if (n < 3) return;
 
     const int nMax = count * n;
-    Cycle &bestCycle = data;
-    Cycle auxCycle = bestCycle;
+    Cycle curCycle = data;
+    Cycle bestCycle = data;
+    Cycle auxCycle = curCycle;
 
-    double temperature = P * bestCycle.getCost();
+    double temperature = P * curCycle.getCost();
     const double beta = (temperature - TEMPEND) / (nMax * temperature * TEMPEND);
 
     for (int k = 0; k < nMax; k += NCOOL) {
@@ -46,17 +47,21 @@ void simulatedAnnealing(Cycle &data, int count, std::mt19937 &generator, Neighbo
         case Swap: {
             for (int step = 0; step < NCOOL; ++step) {
                 int i = random(generator, n);
-                int j;
-                do {
+                int j = random(generator, n);
+                while (i == j) {
                     j = random(generator, n);
-                } while (i == j);
+                }
 
                 auxCycle.swap(i, j);
+                double delta = auxCycle.getCost() - curCycle.getCost();
 
-                if (accept(auxCycle.getCost() - bestCycle.getCost(), temperature, generator)) {
-                    bestCycle.setPath(auxCycle);
+                if (accept(delta, temperature, generator)) {
+                    curCycle.setPath(auxCycle);
+                    if (curCycle.getCost() < bestCycle.getCost()) {
+                        bestCycle.setPath(curCycle);
+                    }
                 } else {
-                    auxCycle.swap(i, j);
+                    auxCycle.swap(i, j); // Revert move
                 }
             }
             break;
@@ -64,15 +69,24 @@ void simulatedAnnealing(Cycle &data, int count, std::mt19937 &generator, Neighbo
 
         case Invert: {
             for (int step = 0; step < NCOOL; ++step) {
-                int countSub = random(generator, 5) + 2;
-                int begin = random(generator, n - countSub);
+                int i = random(generator, n);
+                int j = random(generator, n);
+                while (i == j) {
+                    j = random(generator, n);
+                }
+                if (i > j) std::swap(i, j);
+                int countSub = j - i + 1;
 
-                auxCycle.invertSubpath(begin, countSub);
+                auxCycle.invertSubpath(i, countSub);
+                double delta = auxCycle.getCost() - curCycle.getCost();
 
-                if (accept(auxCycle.getCost() - bestCycle.getCost(), temperature, generator)) {
-                    bestCycle.setPath(auxCycle);
+                if (accept(delta, temperature, generator)) {
+                    curCycle.setPath(auxCycle);
+                    if (curCycle.getCost() < bestCycle.getCost()) {
+                        bestCycle.setPath(curCycle);
+                    }
                 } else {
-                    auxCycle.invertSubpath(begin, countSub);
+                    auxCycle.invertSubpath(i, countSub); // Revert move
                 }
             }
             break;
@@ -81,6 +95,8 @@ void simulatedAnnealing(Cycle &data, int count, std::mt19937 &generator, Neighbo
 
         temperature /= (1.0 + beta * temperature);
     }
+
+    data.setPath(bestCycle);
 }
 
 } // namespace Algorithms

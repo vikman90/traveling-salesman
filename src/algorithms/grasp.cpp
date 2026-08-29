@@ -15,47 +15,36 @@ namespace Algorithms {
 
 namespace {
 
-constexpr int NMUT = 5; ///< Number of mutations in GRASP+
-
-void sortCandidates(Cycle &data, int ilast, int lsize) {
-    const int begin = ilast + 1;
-    const int end = begin + lsize;
-    const int lastNode = data.edgeAt(ilast);
-
-    std::vector<int> candidates(end - begin);
-    for (int i = 0; i < end - begin; ++i) {
-        candidates[i] = data.edgeAt(begin + i);
-    }
-
-    std::sort(candidates.begin(), candidates.end(), [&](int a, int b) {
-        return data.distance(lastNode, a) < data.distance(lastNode, b);
-    });
-
-    for (int i = 0; i < end - begin; ++i) {
-        data.edgeAt(begin + i) = candidates[i];
-    }
-    data.updateCost();
-}
+constexpr int NMUT = 4; ///< Number of mutation cycles in GRASP+ (1 initial BL + 4 mutation BLs = 5 BLs/start)
 
 void greedyProb(Cycle &data, std::mt19937 &generator) {
     const int n = data.getSize();
     if (n < 3) return;
 
     const int lsize = std::max(2, n / 10);
-    int ilast = 0;
 
     data.sortPath();
-    data.swap(0, random(generator, n));
+    // Choose initial city at random
+    int startIdx = random(generator, n);
+    data.swap(0, startIdx);
 
-    while (n - ilast - 1 > lsize) {
-        sortCandidates(data, ilast, lsize);
-        data.swap(ilast, random(generator, lsize) + ilast + 1);
-        ilast++;
-    }
+    for (int i = 1; i < n; ++i) {
+        int lastNode = data.edgeAt(i - 1);
+        int rem = n - i;
+        int currentL = std::min(rem, lsize);
 
-    while (n - ilast > 2) {
-        data.swap(ilast, random(generator, n - ilast - 1) + ilast + 1);
-        ilast++;
+        // Select the currentL closest unvisited cities among ALL remaining unvisited nodes
+        std::vector<int> &edges = const_cast<std::vector<int>&>(data.getEdges());
+        std::partial_sort(edges.begin() + i, edges.begin() + i + currentL, edges.end(),
+            [&](int a, int b) {
+                return data.distance(lastNode, a) < data.distance(lastNode, b);
+            });
+
+        // Pick uniformly at random from the RCL
+        int choiceOffset = random(generator, currentL);
+        if (choiceOffset != 0) {
+            data.swap(i, i + choiceOffset);
+        }
     }
 
     data.updateCost();
