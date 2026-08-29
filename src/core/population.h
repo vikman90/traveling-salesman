@@ -58,7 +58,6 @@ private:
 
     int select(int iLast) const;
     Cycle cross(int iFather, int iMother);
-    void replace(int iFather, int iMother, Cycle &son, Cycle &daughter, int iLast);
     void replace(Cycle &son, Cycle &daughter);
 
     bool mutateNow();
