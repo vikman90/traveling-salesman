@@ -23,7 +23,7 @@ namespace {
 enum class Algorithm {
     None, Greedy, RS, LS, VND, SA,
     GreedyLS, GreedyLSExt, BMB, Grasp, GraspExt, ILS, VNS, Tabu,
-    Genetic, Memetic, ParallelSA, ParallelGenetic
+    Genetic, Memetic, Scatter, ParallelSA, ParallelGenetic
 };
 
 struct CliConfig {
@@ -77,6 +77,7 @@ void printHelp() {
               << "  tabu      Tabu search\n"
               << "  ga        Genetic algorithms\n"
               << "  ma        Memetic algorithms\n"
+              << "  scatter   Scatter search (Búsqueda Dispersa)\n"
               << "  psa       Parallel simulated annealing\n"
               << "  pga       Parallel genetic algorithms\n\n"
               << "METHODS:\n"
@@ -123,6 +124,7 @@ bool parseArgs(int argc, char **argv, CliConfig &cfg) {
             else if (a == "tabu" || a == "ts" || a == "taboo") { cfg.algorithm = Algorithm::Tabu; cfg.count = 50; }
             else if (a == "ga") { cfg.algorithm = Algorithm::Genetic; cfg.count = 2000; cfg.size = 30; }
             else if (a == "ma") { cfg.algorithm = Algorithm::Memetic; cfg.count = 2000; cfg.size = 10; }
+            else if (a == "scatter" || a == "ss" || a == "bd") { cfg.algorithm = Algorithm::Scatter; cfg.count = 2000; }
             else if (a == "psa") { cfg.algorithm = Algorithm::ParallelSA; cfg.count = 20; cfg.processes = 5; }
             else if (a == "pga") { cfg.algorithm = Algorithm::ParallelGenetic; cfg.count = 50; cfg.size = 10; cfg.processes = 4; cfg.migrLatency = 2; }
             else return false;
@@ -273,6 +275,10 @@ int main(int argc, char **argv) {
 
     case Algorithm::Memetic:
         Algorithms::memetic(data, cfg.size, cfg.count, cfg.hybridization, cfg.seed);
+        break;
+
+    case Algorithm::Scatter:
+        Algorithms::scatterSearch(data, cfg.count, cfg.seed);
         break;
 
     case Algorithm::ParallelSA:
