@@ -5,7 +5,7 @@
 [![C++17](https://img.shields.io/badge/Standard-C%2B%2B17-emerald.svg)](https://en.cppreference.com/w/cpp/17)
 [![Algorithms Guide](https://img.shields.io/badge/Docs-Algorithms%20Guide-purple.svg)](docs/ALGORITHMS.md)
 
-A high-performance modern C++17 solution and interactive desktop visualizer for the **Traveling Salesman Problem (TSP)**. It provides 16 optimization algorithms spanning greedy heuristics, local search descent, evolutionary and genetic algorithms, and parallel metaheuristics.
+A high-performance modern C++17 solution and interactive desktop visualizer for the **Traveling Salesman Problem (TSP)**. It provides 17 optimization algorithms spanning greedy heuristics, local search descent, evolutionary and genetic algorithms, and parallel metaheuristics.
 
 <!-- Screenshot placeholder: replace with your image path (e.g. docs/images/screenshot.png) -->
 <p align="center">
@@ -21,7 +21,7 @@ The codebase is organized into cleanly decoupled modules:
 ```text
 src/
 ├── core/         # Core data structures (Cycle, Population) using STL containers & Rule of Zero
-├── algorithms/   # 16 heuristic and evolutionary optimization algorithms
+├── algorithms/   # 17 heuristic and evolutionary optimization algorithms
 ├── cli/          # High-performance CLI application (main_cli.cpp)
 └── gui/          # Desktop graphical visualizer backend & controller (app_controller, main_gui)
 
@@ -76,6 +76,7 @@ For in-depth mathematical formulations, pseudocode, and complexity analysis, see
 | | Basic Multiboot Search | `bmb` | Iterations (`-n`), Seed (`-s`) |
 | | Iterated Local Search | `ils` | Iterations (`-n`), Seed (`-s`) |
 | | Variable Neighborhood Search | `vns` | Iterations (`-n`), Seed (`-s`) |
+| | Tabu Search (Búsqueda Tabú) | `tabu` | Iterations (`-n`), Seed (`-s`) |
 | **Metaheuristics & Evolutionary** | Simulated Annealing | `sa` | Iterations (`-n`), Seed (`-s`), Operator (`swap`/`invert`) |
 | | Genetic Algorithm | `ga` | Pop Size (`-d`), Iterations (`-n`), Scheme (`gener`/`stat`), Seed (`-s`) |
 | | Memetic Algorithm | `ma` | Pop Size (`-d`), Iterations (`-n`), Hybridization Schedule, Seed (`-s`) |
