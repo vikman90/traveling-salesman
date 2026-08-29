@@ -88,13 +88,20 @@ For in-depth mathematical formulations, pseudocode, and complexity analysis, see
 
 - **Compiler:** Modern C++17 compiler (GCC 9+, Clang 10+, MSVC 2019+)
 - **CMake:** Version 3.22 or higher
-- **Linux (for Desktop GUI):**
+- **Linux (Debian/Ubuntu packages):**
   ```bash
-  sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev
+  sudo apt-get update && sudo apt-get install -y \
+    build-essential \
+    cmake \
+    pkg-config \
+    git \
+    libwebkit2gtk-4.1-dev \
+    libgtk-3-dev \
+    xvfb
   ```
   *(If building on a minimal headless Linux server without GUI libraries, CMake will automatically build the CLI and test suite).*
-- **Windows:** Microsoft Edge WebView2 (included by default in Windows 10/11)
-- **macOS:** System Cocoa and WebKit frameworks (included with macOS)
+- **Windows:** Microsoft Edge WebView2 (included by default in Windows 10/11) and CMake 3.22+
+- **macOS:** System Cocoa and WebKit frameworks (included with macOS) and CMake 3.22+
 
 ---
 
