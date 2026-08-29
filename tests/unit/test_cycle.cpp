@@ -55,7 +55,14 @@ int main() {
 
         // Path is 0 -> 1 -> 2 -> 0: cost = 5 + 3 + 4 = 12
         assert(c.getCost() == 12.0f);
-        std::cout << "  ✓ Set vertices and TSPLIB floor Euclidean distance calculation verified" << std::endl;
+
+        // Fractional rounding test: sqrt(1^2 + 2^2) = sqrt(5) ≈ 2.236 -> round = 2.0; sqrt(2^2 + 2^2) = sqrt(8) ≈ 2.828 -> round = 3.0
+        Cycle cRound;
+        cRound.setVertices({{0.0f, 0.0f}, {1.0f, 2.0f}, {3.0f, 4.0f}});
+        assert(cRound.distance(0, 1) == 2.0f);
+        assert(cRound.distance(1, 2) == 3.0f);
+
+        std::cout << "  ✓ Set vertices and TSPLIB rounded Euclidean distance calculation verified" << std::endl;
     }
 
     // Test 4: Copy and Move Semantics (Rule of Zero)
