@@ -81,6 +81,7 @@ int main() {
         "-a ga -g gener -n 50 -d 20 -s 42 " + berlinTsp,
         "-a ga -g stat -n 50 -d 20 -s 42 " + berlinTsp,
         "-a ma -h all,2 -n 30 -d 10 -s 42 " + berlinTsp,
+        "-a scatter -n 50 -s 42 " + berlinTsp,
         "-a psa -p 3 -n 20 -s 42 " + berlinTsp,
         "-a pga -t ring -p 3 -d 10 -n 30 -s 42 " + berlinTsp,
         "-a pga -t star -p 3 -d 10 -n 30 -s 42 " + berlinTsp

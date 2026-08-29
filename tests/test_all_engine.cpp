@@ -90,6 +90,7 @@ int main() {
         {"Genetic Algorithm (ga - gener)", {{"algorithm", "ga"}, {"size", 10}, {"count", 50}, {"scheme", "gener"}, {"seed", 42}}},
         {"Genetic Algorithm (ga - stat)", {{"algorithm", "ga"}, {"size", 10}, {"count", 50}, {"scheme", "stat"}, {"seed", 42}}},
         {"Memetic Algorithm (ma)", {{"algorithm", "ma"}, {"size", 10}, {"count", 20}, {"hybridization", "all,2"}, {"seed", 42}}},
+        {"Scatter Search (scatter)", {{"algorithm", "scatter"}, {"count", 50}, {"seed", 42}}},
         {"Parallel Simulated Annealing (psa)", {{"algorithm", "psa"}, {"processes", 3}, {"count", 10}, {"migrLatency", 2}, {"seed", 42}}},
         {"Parallel Genetic (pga - ring)", {{"algorithm", "pga"}, {"processes", 3}, {"size", 10}, {"count", 20}, {"migrLatency", 2}, {"topology", "ring"}, {"seed", 42}}},
         {"Parallel Genetic (pga - star)", {{"algorithm", "pga"}, {"processes", 3}, {"size", 10}, {"count", 20}, {"migrLatency", 2}, {"topology", "star"}, {"seed", 42}}}
