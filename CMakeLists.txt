@@ -84,6 +84,7 @@ set(ALGORITHM_SOURCES
     src/algorithms/localsearch.cpp
     src/algorithms/memetic.cpp
     src/algorithms/randomsearch.cpp
+    src/algorithms/tabusearch.cpp
     src/algorithms/vns.cpp
 )
 

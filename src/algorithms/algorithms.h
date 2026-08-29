@@ -53,6 +53,8 @@ void descendantSearch(Cycle &data, int count, unsigned int seed);
 void basicMultibootSearch(Cycle &data, int count, unsigned int seed);
 void iteratedLocalSearch(Cycle &data, int count, unsigned int seed);
 void variableSearch(Cycle &data, int count, unsigned int seed);
+void tabuSearch(Cycle &data, int count, unsigned int seed);
+void tabuSearch(Cycle &data, int count, std::mt19937 &generator);
 
 // 3. Metaheuristics & Evolutionary
 void simulatedAnnealing(Cycle &data, int count, unsigned int seed, NeighborGenerator neighbor);
