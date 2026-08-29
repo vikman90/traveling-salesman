@@ -407,7 +407,7 @@ void Cycle::updateDistances() {
         for (int j = 0; j < i; ++j) {
             float dx = vertices[i].x - vertices[j].x;
             float dy = vertices[i].y - vertices[j].y;
-            float dist = std::floor(std::sqrt(dx * dx + dy * dy));
+            float dist = std::round(std::sqrt(dx * dx + dy * dy));
             distances[i * size + j] = dist;
             distances[j * size + i] = dist;
         }
