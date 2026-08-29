@@ -751,14 +751,14 @@ const std::string INDEX_HTML = R"rawliteral(<!DOCTYPE html>
         <div class="form-group">
           <label>Algorithm Technique</label>
           <select id="algoSelect" onchange="onAlgoChange()">
-            <optgroup label="Constructive &amp; Heuristic">
+            <optgroup label="Constructive and Heuristic">
               <option value="greedy">Greedy Search (Deterministic)</option>
               <option value="greedyls">Greedy + Local Search (greedyls)</option>
               <option value="greedyls+">Greedy + Extended LS (greedyls+)</option>
               <option value="grasp">GRASP (Greedy Randomized)</option>
               <option value="grasp+">GRASP Extended</option>
             </optgroup>
-            <optgroup label="Neighborhood &amp; Local Search">
+            <optgroup label="Neighborhood and Local Search">
               <option value="rs">Random Search (rs)</option>
               <option value="ls">Local Search (ls)</option>
               <option value="vnd">Variable Neighborhood Descent (vnd)</option>
@@ -767,7 +767,7 @@ const std::string INDEX_HTML = R"rawliteral(<!DOCTYPE html>
               <option value="vns">Variable Neighborhood Search (vns)</option>
               <option value="tabu">Tabu Search (tabu)</option>
             </optgroup>
-            <optgroup label="Metaheuristics &amp; Evolutionary">
+            <optgroup label="Metaheuristics and Evolutionary">
               <option value="sa" selected>Simulated Annealing (sa)</option>
               <option value="ga">Genetic Algorithm (ga)</option>
               <option value="ma">Memetic Algorithm (ma)</option>
