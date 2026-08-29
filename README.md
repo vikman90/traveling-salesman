@@ -4,8 +4,11 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![C++17](https://img.shields.io/badge/Standard-C%2B%2B17-emerald.svg)](https://en.cppreference.com/w/cpp/17)
 [![Algorithms Guide](https://img.shields.io/badge/Docs-Algorithms%20Guide-purple.svg)](docs/ALGORITHMS.md)
+[![Practicals Guide](https://img.shields.io/badge/Docs-Practicals%20P0--P4-blue.svg)](docs/PRACTICAS.md)
+[![Benchmark Report](https://img.shields.io/badge/Docs-Benchmark%20Report-orange.svg)](docs/BENCHMARKS.md)
+[![User Manual](https://img.shields.io/badge/Docs-User%20Manual-green.svg)](docs/USER_MANUAL.md)
 
-A high-performance modern C++17 solution and interactive desktop visualizer for the **Traveling Salesman Problem (TSP)**. It provides 17 optimization algorithms spanning greedy heuristics, local search descent, evolutionary and genetic algorithms, and parallel metaheuristics.
+A high-performance modern C++17 solution, statistical benchmarking tool, and interactive desktop visualizer for the **Traveling Salesman Problem (TSP)**. It provides 18 optimization algorithms spanning greedy heuristics, local search descent, evolutionary and genetic algorithms, scatter search, and parallel metaheuristics (fully compliant with University Metaheuristics Practicals P0 - P4).
 
 <!-- Screenshot placeholder: replace with your image path (e.g. docs/images/screenshot.png) -->
 <p align="center">
@@ -21,24 +24,28 @@ The codebase is organized into cleanly decoupled modules:
 ```text
 src/
 ├── core/         # Core data structures (Cycle, Population) using STL containers & Rule of Zero
-├── algorithms/   # 17 heuristic and evolutionary optimization algorithms
+├── algorithms/   # 18 heuristic, evolutionary, and parallel optimization algorithms
+├── tools/        # Automated statistical benchmark runner (tsp-benchmark)
 ├── cli/          # High-performance CLI application (main_cli.cpp)
 └── gui/          # Desktop graphical visualizer backend & controller (app_controller, main_gui)
 
 tests/
 ├── unit/         # Granular unit tests (Cycle, Population, Invariants)
-├── integration/  # TSPLIB benchmarks & GUI AppController API tests
+├── integration/  # TSPLIB benchmarks, benchmark suite & GUI AppController API tests
 └── smoke/        # CLI flag matrix smoke tests
 
 docs/
-└── ALGORITHMS.md # Comprehensive mathematical & educational guide
+├── ALGORITHMS.md   # Comprehensive mathematical & algorithmic reference
+├── PRACTICAS.md    # University metaheuristics course specification & guide (P0-P4)
+├── BENCHMARKS.md   # Full 10-seed empirical statistical benchmark report
+└── USER_MANUAL.md  # Complete user & developer operational manual
 ```
 
 ---
 
 ## 🌟 Applications Overview
 
-The project produces two independent executables built from a unified C++17 core engine:
+The project produces three independent executables built from a unified C++17 core engine:
 
 ### 1. Desktop GUI Visualizer (`tsp-gui`)
 An interactive desktop visualizer powered by native C++ and lightweight WebView (WebKitGTK on Linux, WebView2 on Windows, WKWebView on macOS):
@@ -51,17 +58,24 @@ An interactive desktop visualizer powered by native C++ and lightweight WebView 
 - **Drag & Drop & Export:** Drag any `.tsp` or `.tour` file onto the window, and export solutions as TSPLIB files or high-resolution PNG images.
 
 ### 2. High-Performance CLI (`tsp`)
-The command-line interface for fast headless execution, scripting, and batch benchmarking.
+The command-line interface for fast headless execution, scripting, and batch problem solving.
 
 ```bash
 tsp [-a ALGORITHM [-n REP] [-s SEED] [-m METHOD]] [-c TOUR] [-o TOUR] TSP
+```
+
+### 3. Automated Benchmark Runner (`tsp-benchmark`)
+The native statistical benchmark suite that runs the 10 official standardized seeds across TSPLIB instances and computes $m, \bar{x}, p, \sigma, t, t/P, \text{GAP}\%$.
+
+```bash
+./build/tsp-benchmark --export docs/BENCHMARKS.md --csv docs/benchmarks.csv
 ```
 
 ---
 
 ## 🧠 Supported Optimization Algorithms
 
-For in-depth mathematical formulations, pseudocode, and complexity analysis, see the [Educational Algorithms Guide](docs/ALGORITHMS.md).
+For in-depth mathematical formulations, pseudocode, and complexity analysis, see the [Educational Algorithms Guide](docs/ALGORITHMS.md) and the [University Practicals Guide](docs/PRACTICAS.md).
 
 | Category | Algorithm | CLI Identifier (`-a`) | Parameter Controls |
 | :--- | :--- | :--- | :--- |
@@ -71,15 +85,16 @@ For in-depth mathematical formulations, pseudocode, and complexity analysis, see
 | | GRASP (Greedy Randomized Adaptive) | `grasp` | Iterations (`-n`), Seed (`-s`) |
 | | GRASP Extended | `grasp+` | Iterations (`-n`), Seed (`-s`) |
 | **Neighborhood & Local Search** | Random Search | `rs` | Iterations (`-n`), Seed (`-s`) |
-| | Local Search (2-Opt First Improvement) | `ls` | Seed (`-s`) |
+| | Local Search (2-Opt Best Improvement) | `ls` | Seed (`-s`) |
 | | Variable Neighborhood Descent | `vnd` | Iterations (`-n`), Seed (`-s`) |
 | | Basic Multiboot Search | `bmb` | Iterations (`-n`), Seed (`-s`) |
 | | Iterated Local Search | `ils` | Iterations (`-n`), Seed (`-s`) |
 | | Variable Neighborhood Search | `vns` | Iterations (`-n`), Seed (`-s`) |
-| | Tabu Search (Búsqueda Tabú) | `tabu` | Iterations (`-n`), Seed (`-s`) |
+| | Tabu Search | `tabu` | Iterations (`-n`), Seed (`-s`) |
 | **Metaheuristics & Evolutionary** | Simulated Annealing | `sa` | Iterations (`-n`), Seed (`-s`), Operator (`swap`/`invert`) |
 | | Genetic Algorithm | `ga` | Pop Size (`-d`), Iterations (`-n`), Scheme (`gener`/`stat`), Seed (`-s`) |
 | | Memetic Algorithm | `ma` | Pop Size (`-d`), Iterations (`-n`), Hybridization Schedule, Seed (`-s`) |
+| | Scatter Search | `scatter` / `bd` | Iterations (`-n`), Seed (`-s`) |
 | **Parallel Metaheuristics** | Parallel Simulated Annealing | `psa` | Processes (`-p`), Latency (`-l`), Iterations (`-n`), Seed (`-s`) |
 | | Parallel Genetic Algorithm | `pga` | Processes (`-p`), Latency (`-l`), Topology (`ring`/`star`), Pop Size (`-d`), Seed (`-s`) |
 
@@ -122,11 +137,12 @@ cmake --build build --config Release
 
 The build produces the following targets in `build/`:
 - `build/tsp`: The CLI solver.
+- `build/tsp-benchmark`: The automated statistical benchmark runner.
 - `build/tsp-gui`: The desktop graphical application.
 - `build/tsp-test`: The unified regression engine test suite.
-- `build/unit_tests`: Granular unit test suite.
-- `build/integration_tests`: TSPLIB benchmark and API integration suite.
-- `build/smoke_tests`: CLI smoke test suite.
+- `build/test_cycle`, `build/test_population`, `build/test_algorithms_invariants`: Granular unit test suite.
+- `build/test_tsplib_benchmarks`, `build/test_app_controller`: TSPLIB benchmark and API integration suite.
+- `build/test_cli_smoke`: CLI smoke test suite.
 
 ---
 
@@ -140,10 +156,16 @@ The build produces the following targets in `build/`:
 ### Run the CLI Solver
 ```bash
 # Run Simulated Annealing on Berlin52 instance
-./build/tsp -a sa -n 50000 -m invert data/berlin52.tsp
+./build/tsp -a sa -n 2000 -m invert data/berlin52.tsp
 
 # Run Parallel Genetic Algorithm with star island topology
-./build/tsp -a pga -p 4 -d 50 -n 1000 -t star data/berlin52.tsp
+./build/tsp -a pga -p 4 -d 10 -n 50 -t star data/berlin52.tsp
+```
+
+### Run the Statistical Benchmark Suite
+```bash
+# Run all 10 standardized seeds across all datasets and export results
+./build/tsp-benchmark --export docs/BENCHMARKS.md --csv docs/benchmarks.csv
 ```
 
 ---
@@ -170,6 +192,9 @@ Or run individual target suites directly:
 # Smoke tests
 ./build/test_cli_smoke
 
+# Benchmark smoke test
+./build/tsp-benchmark --quick
+
 # Headless UI automated end-to-end simulation
 xvfb-run -a ./build/tsp-gui --test-ui
 ```
@@ -178,7 +203,10 @@ xvfb-run -a ./build/tsp-gui --test-ui
 
 ## 📖 Documentation
 
-- **[Educational Algorithms Guide (docs/ALGORITHMS.md)](docs/ALGORITHMS.md):** Theoretical foundation, pseudocode, and mathematical explanations for all 16 algorithms.
+- **[Educational Algorithms Guide (docs/ALGORITHMS.md)](docs/ALGORITHMS.md):** Theoretical foundation, pseudocode, and mathematical explanations for all 18 algorithms.
+- **[University Practicals Guide (docs/PRACTICAS.md)](docs/PRACTICAS.md):** Comprehensive academic guide covering all requirements, formulas, and parameters for P0–P4.
+- **[Empirical Benchmark Report (docs/BENCHMARKS.md)](docs/BENCHMARKS.md):** Complete 10-seed statistical benchmark tables across all 24 configurations.
+- **[User & Developer Manual (docs/USER_MANUAL.md)](docs/USER_MANUAL.md):** End-to-end operational manual for building, running, and testing the software.
 - **Doxygen API Documentation:** https://vikman90.github.io/traveling-salesman
 
 ---
