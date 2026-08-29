@@ -100,16 +100,44 @@ int main() {
         assert(pgaCost < randomCost * 0.7f);
     }
 
-    std::string kroAPath;
-    if (findDataFile("kroA100.tsp", kroAPath)) {
-        Cycle kroA;
-        assert(kroA.loadTsp(kroAPath));
-        assert(kroA.getSize() == 100);
+    // Test 7: Scatter Search (Búsqueda Dispersa)
+    {
+        Cycle c = berlin;
+        Algorithms::scatterSearch(c, 200, 42);
+        float ssCost = c.getCost();
+        std::cout << "  • berlin52 Scatter Search cost: " << ssCost << std::endl;
+        assert(ssCost < randomCost * 0.6f);
+    }
 
-        Cycle c = kroA;
-        Algorithms::greedy(c);
-        std::cout << "  • kroA100 Greedy cost: " << c.getCost() << std::endl;
-        assert(c.getCost() > 0.0f);
+    // Test 8: Known Optimal Tour Costs Verification (TSPLIB EUC_2D Rounding)
+    {
+        std::string tourPath;
+        if (findDataFile("berlin52.opt.tour", tourPath)) {
+            Cycle c = berlin;
+            assert(c.loadTour(tourPath));
+            std::cout << "  ✓ berlin52.opt.tour cost: " << c.getCost() << " (Expected: 7542)" << std::endl;
+            assert(c.getCost() == 7542.0f);
+        }
+
+        std::string kroATourPath;
+        std::string kroAPath;
+        if (findDataFile("kroA100.tsp", kroAPath) && findDataFile("kroA100.opt.tour", kroATourPath)) {
+            Cycle kroA;
+            assert(kroA.loadTsp(kroAPath));
+            assert(kroA.loadTour(kroATourPath));
+            std::cout << "  ✓ kroA100.opt.tour cost: " << kroA.getCost() << " (Expected: 21282)" << std::endl;
+            assert(kroA.getCost() == 21282.0f);
+        }
+
+        std::string a280TourPath;
+        std::string a280Path;
+        if (findDataFile("a280.tsp", a280Path) && findDataFile("a280.opt.tour", a280TourPath)) {
+            Cycle a280;
+            assert(a280.loadTsp(a280Path));
+            assert(a280.loadTour(a280TourPath));
+            std::cout << "  ✓ a280.opt.tour cost: " << a280.getCost() << " (Expected: 2579)" << std::endl;
+            assert(a280.getCost() == 2579.0f);
+        }
     }
 
     std::cout << "🎉 ALL TSPLIB INTEGRATION TESTS PASSED!\n" << std::endl;
