@@ -19,51 +19,62 @@ void parallelGenetic(Cycle &data, int processes, int size, int count, int migrLa
     if (size < 3 || data.getSize() < 3) return;
     if (migrLatency < 1) migrLatency = 1;
 
-    const int nMax = count * data.getSize();
+    const int totalGenerations = count * data.getSize();
+    const int migrationInterval = std::max(1, migrLatency * data.getSize());
+
     std::mt19937 generator(seed);
-    Cycle &bestCycle = data;
+    Cycle bestCycle = data;
+    bestCycle.clearPath();
 
     std::vector<Population> world;
     world.reserve(processes);
     for (int i = 0; i < processes; ++i) {
         world.emplace_back(size, data, generator);
+        int iBest = world[i].bestCycle();
+        if (world[i][iBest].getCost() < bestCycle.getCost()) {
+            bestCycle.setPath(world[i][iBest]);
+        }
     }
 
-    const int migrationInterval = migrLatency * data.getSize();
-
-    for (int n = 0; n < nMax; ++n) {
+    for (int gen = 1; gen <= totalGenerations; ++gen) {
         for (int i = 0; i < processes; ++i) {
             world[i].evolve(Generational);
         }
 
         // Migration step
-        if ((n + 1) % migrationInterval == 0 && processes > 1) {
+        if (gen % migrationInterval == 0 && processes > 1) {
             switch (topology) {
             case Star: {
                 float bestMean = FLT_MAX;
-                int iBest = 0;
+                int masterIdx = 0;
 
                 for (int i = 0; i < processes; ++i) {
                     float mean = world[i].meanCost();
                     if (mean < bestMean) {
-                        iBest = i;
+                        masterIdx = i;
                         bestMean = mean;
                     }
                 }
 
+                Cycle masterBest = world[masterIdx][world[masterIdx].bestCycle()];
                 for (int i = 0; i < processes; ++i) {
-                    if (i != iBest) {
-                        world[i][world[i].worstCycle()].setPath(world[iBest][world[iBest].bestCycle()]);
-                        world[iBest][world[iBest].worstCycle()].setPath(world[i][world[i].bestCycle()]);
+                    if (i != masterIdx) {
+                        Cycle slaveBest = world[i][world[i].bestCycle()];
+                        world[i][world[i].worstCycle()].setPath(masterBest);
+                        world[masterIdx][world[masterIdx].worstCycle()].setPath(slaveBest);
                     }
                 }
                 break;
             }
 
             case Ring: {
+                std::vector<Cycle> champions(processes);
                 for (int i = 0; i < processes; ++i) {
-                    int nextIsland = (i + 1) % processes;
-                    world[i][world[i].worstCycle()].setPath(world[nextIsland][world[nextIsland].bestCycle()]);
+                    champions[i] = world[i][world[i].bestCycle()];
+                }
+                for (int i = 0; i < processes; ++i) {
+                    int targetIsland = (i + 1) % processes;
+                    world[targetIsland][world[targetIsland].worstCycle()].setPath(champions[i]);
                 }
                 break;
             }
@@ -78,6 +89,8 @@ void parallelGenetic(Cycle &data, int processes, int size, int count, int migrLa
             }
         }
     }
+
+    data.setPath(bestCycle);
 }
 
 } // namespace Algorithms
