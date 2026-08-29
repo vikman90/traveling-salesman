@@ -119,6 +119,11 @@ if(CAN_BUILD_GUI)
     endif()
 endif()
 
+# Target 3: Automated Statistical Benchmark Runner
+add_executable(tsp-benchmark src/tools/benchmark_runner.cpp)
+target_include_directories(tsp-benchmark PRIVATE src)
+target_link_libraries(tsp-benchmark PRIVATE tsp_algorithms)
+
 # ------------------------------------------------------------------------------
 # Testing Scaffolding (CTest)
 # ------------------------------------------------------------------------------
