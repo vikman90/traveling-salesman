@@ -176,4 +176,7 @@ if(BUILD_TESTS)
         target_link_libraries(tsp-test PRIVATE Threads::Threads)
     endif()
     add_test(NAME Regression_EngineSuite COMMAND tsp-test)
+
+    # Integration Tests: Automated Benchmark Runner Smoke
+    add_test(NAME Integration_BenchmarkSuite COMMAND tsp-benchmark --quick)
 endif()
