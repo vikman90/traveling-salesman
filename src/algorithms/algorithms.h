@@ -61,6 +61,7 @@ void simulatedAnnealing(Cycle &data, int count, unsigned int seed, NeighborGener
 void simulatedAnnealing(Cycle &data, int count, std::mt19937 &generator, NeighborGenerator neighbor);
 void genetic(Cycle &data, int size, int count, Scheme scheme, unsigned int seed);
 void memetic(Cycle &data, int size, int count, Hybridization hybridization, unsigned int seed);
+void scatterSearch(Cycle &data, int count, unsigned int seed);
 
 // 4. Parallel Metaheuristics
 void parallelAnnealing(Cycle &data, int processes, int count, int migrLatency, unsigned int seed);
