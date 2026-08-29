@@ -77,6 +77,7 @@ int main() {
         "-a grasp+ -n 10 -s 42 " + berlinTsp,
         "-a ils -n 20 -s 42 " + berlinTsp,
         "-a vns -n 20 -s 42 " + berlinTsp,
+        "-a tabu -n 20 -s 42 " + berlinTsp,
         "-a ga -g gener -n 50 -d 20 -s 42 " + berlinTsp,
         "-a ga -g stat -n 50 -d 20 -s 42 " + berlinTsp,
         "-a ma -h all,2 -n 30 -d 10 -s 42 " + berlinTsp,
@@ -93,7 +94,7 @@ int main() {
             assert(false);
         }
     }
-    std::cout << "  ✓ All 18 CLI command flag combinations executed successfully" << std::endl;
+    std::cout << "  ✓ All 19 CLI command flag combinations executed successfully" << std::endl;
 
     // Test 4: Save and Load Tour
     {

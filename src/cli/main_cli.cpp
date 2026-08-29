@@ -22,7 +22,7 @@ namespace {
 
 enum class Algorithm {
     None, Greedy, RS, LS, VND, SA,
-    GreedyLS, GreedyLSExt, BMB, Grasp, GraspExt, ILS, VNS,
+    GreedyLS, GreedyLSExt, BMB, Grasp, GraspExt, ILS, VNS, Tabu,
     Genetic, Memetic, ParallelSA, ParallelGenetic
 };
 
@@ -74,6 +74,7 @@ void printHelp() {
               << "  grasp+    Extended GRASP\n"
               << "  ils       Iterated local search\n"
               << "  vns       Variable neighborhood search\n"
+              << "  tabu      Tabu search\n"
               << "  ga        Genetic algorithms\n"
               << "  ma        Memetic algorithms\n"
               << "  psa       Parallel simulated annealing\n"
@@ -119,6 +120,7 @@ bool parseArgs(int argc, char **argv, CliConfig &cfg) {
             else if (a == "grasp+") { cfg.algorithm = Algorithm::GraspExt; cfg.count = 10; }
             else if (a == "ils") { cfg.algorithm = Algorithm::ILS; cfg.count = 50; }
             else if (a == "vns") { cfg.algorithm = Algorithm::VNS; cfg.count = 50; }
+            else if (a == "tabu" || a == "ts" || a == "taboo") { cfg.algorithm = Algorithm::Tabu; cfg.count = 50; }
             else if (a == "ga") { cfg.algorithm = Algorithm::Genetic; cfg.count = 2000; cfg.size = 30; }
             else if (a == "ma") { cfg.algorithm = Algorithm::Memetic; cfg.count = 2000; cfg.size = 10; }
             else if (a == "psa") { cfg.algorithm = Algorithm::ParallelSA; cfg.count = 20; cfg.processes = 5; }
@@ -259,6 +261,10 @@ int main(int argc, char **argv) {
 
     case Algorithm::VNS:
         Algorithms::variableSearch(data, cfg.count, cfg.seed);
+        break;
+
+    case Algorithm::Tabu:
+        Algorithms::tabuSearch(data, cfg.count, cfg.seed);
         break;
 
     case Algorithm::Genetic:

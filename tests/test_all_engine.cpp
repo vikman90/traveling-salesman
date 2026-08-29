@@ -65,7 +65,7 @@ int main() {
     std::cout << "  ✓ TSP Serialization & reload verified" << std::endl;
 
     // Test 5: Exhaustive Algorithm Suite Execution
-    std::cout << "\n[5] Testing All 16 Heuristic and Evolutionary Algorithms..." << std::endl;
+    std::cout << "\n[5] Testing All 17 Heuristic and Evolutionary Algorithms..." << std::endl;
 
     struct AlgoTestCase {
         std::string name;
@@ -86,6 +86,7 @@ int main() {
         {"GRASP Extended", {{"algorithm", "grasp+"}, {"count", 5}, {"seed", 42}}},
         {"Iterated Local Search (ils)", {{"algorithm", "ils"}, {"count", 10}, {"seed", 42}}},
         {"Variable Neighborhood Search (vns)", {{"algorithm", "vns"}, {"count", 10}, {"seed", 42}}},
+        {"Tabu Search (tabu)", {{"algorithm", "tabu"}, {"count", 20}, {"seed", 42}}},
         {"Genetic Algorithm (ga - gener)", {{"algorithm", "ga"}, {"size", 10}, {"count", 50}, {"scheme", "gener"}, {"seed", 42}}},
         {"Genetic Algorithm (ga - stat)", {{"algorithm", "ga"}, {"size", 10}, {"count", 50}, {"scheme", "stat"}, {"seed", 42}}},
         {"Memetic Algorithm (ma)", {{"algorithm", "ma"}, {"size", 10}, {"count", 20}, {"hybridization", "all,2"}, {"seed", 42}}},

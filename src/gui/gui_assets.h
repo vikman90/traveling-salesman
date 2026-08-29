@@ -751,22 +751,23 @@ const std::string INDEX_HTML = R"rawliteral(<!DOCTYPE html>
         <div class="form-group">
           <label>Algorithm Technique</label>
           <select id="algoSelect" onchange="onAlgoChange()">
-            <optgroup label="Constructive &amp; Heuristic">
+            <optgroup label="Constructive and Heuristic">
               <option value="greedy">Greedy Search (Deterministic)</option>
               <option value="greedyls">Greedy + Local Search (greedyls)</option>
               <option value="greedyls+">Greedy + Extended LS (greedyls+)</option>
               <option value="grasp">GRASP (Greedy Randomized)</option>
               <option value="grasp+">GRASP Extended</option>
             </optgroup>
-            <optgroup label="Neighborhood &amp; Local Search">
+            <optgroup label="Neighborhood and Local Search">
               <option value="rs">Random Search (rs)</option>
               <option value="ls">Local Search (ls)</option>
               <option value="vnd">Variable Neighborhood Descent (vnd)</option>
               <option value="bmb">Basic Multiboot Search (bmb)</option>
               <option value="ils">Iterated Local Search (ils)</option>
               <option value="vns">Variable Neighborhood Search (vns)</option>
+              <option value="tabu">Tabu Search (tabu)</option>
             </optgroup>
-            <optgroup label="Metaheuristics &amp; Evolutionary">
+            <optgroup label="Metaheuristics and Evolutionary">
               <option value="sa" selected>Simulated Annealing (sa)</option>
               <option value="ga">Genetic Algorithm (ga)</option>
               <option value="ma">Memetic Algorithm (ma)</option>
@@ -1292,6 +1293,7 @@ const std::string INDEX_HTML = R"rawliteral(<!DOCTYPE html>
       'bmb': { name: 'Basic Multiboot (BMB)', tag: 'Multistart Search', desc: 'Restarts 2-opt local search from multiple random initial solutions.' },
       'ils': { name: 'Iterated Local Search (ILS)', tag: 'Perturbation Search', desc: 'Perturbs local optima (double-bridge) and applies 2-opt search.' },
       'vns': { name: 'Variable Neighborhood Search (VNS)', tag: 'Stochastic Neighborhood', desc: 'Combines stochastic shaking across neighborhoods with local descent.' },
+      'tabu': { name: 'Tabu Search (tabu)', tag: 'Trajectory Metaheuristic', desc: 'Neighborhood search with short-term tabu list and long-term memory restarts.' },
       'sa': { name: 'Simulated Annealing (sa)', tag: 'Thermodynamic Metaheuristic', desc: 'Probabilistically accepts worsening moves to escape local optima.' },
       'ga': { name: 'Genetic Algorithm (ga)', tag: 'Evolutionary Algorithm', desc: 'Evolves a population of tours using crossover, mutation, and selection.' },
       'ma': { name: 'Memetic Algorithm (ma)', tag: 'Hybrid Evolutionary', desc: 'Genetic algorithm enhanced with local search optimization on individuals.' },
@@ -1328,7 +1330,7 @@ const std::string INDEX_HTML = R"rawliteral(<!DOCTYPE html>
 
       // Adjust defaults
       if (algo === 'greedyls+') document.getElementById('inputCount').value = 5;
-      else if (['bmb', 'grasp', 'ils', 'vns', 'pga'].includes(algo)) document.getElementById('inputCount').value = 50;
+      else if (['bmb', 'grasp', 'ils', 'vns', 'tabu', 'pga'].includes(algo)) document.getElementById('inputCount').value = 50;
       else if (algo === 'grasp+') document.getElementById('inputCount').value = 10;
       else if (algo === 'psa') document.getElementById('inputCount').value = 20;
       else if (['rs', 'vnd', 'sa', 'ga', 'ma'].includes(algo)) document.getElementById('inputCount').value = 2000;

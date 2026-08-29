@@ -1,6 +1,6 @@
 # 📘 Traveling Salesman Problem (TSP) — Educational Algorithm Guide
 
-An exhaustive pedagogical and mathematical guide to the **Traveling Salesman Problem (TSP)** and the 16 heuristic, metaheuristic, evolutionary, and parallel algorithms implemented in this project.
+An exhaustive pedagogical and mathematical guide to the **Traveling Salesman Problem (TSP)** and the 17 heuristic, metaheuristic, evolutionary, and parallel algorithms implemented in this project.
 
 ---
 
@@ -20,6 +20,7 @@ An exhaustive pedagogical and mathematical guide to the **Traveling Salesman Pro
    - [Basic Multiboot Search (BMB)](#44-basic-multiboot-search-bmb)
    - [Iterated Local Search (ILS)](#45-iterated-local-search-ils)
    - [Variable Neighborhood Search (VNS)](#46-variable-neighborhood-search-vns)
+   - [Tabu Search (BT)](#47-tabu-search-tabu)
 5. [Category 3: Metaheuristics & Evolutionary Algorithms](#5-category-3-metaheuristics--evolutionary-algorithms)
    - [Simulated Annealing (SA)](#51-simulated-annealing-sa)
    - [Genetic Algorithms (GA)](#52-genetic-algorithms-ga)
@@ -81,6 +82,7 @@ Because TSP is **NP-hard**, exact enumeration is intractable for large $n$. Heur
 │ • grasp          │   │ • bmb (Multiboot) │           └───────────────────┘
 │ • grasp+         │   │ • ils (Iterated)  │
 └──────────────────┘   │ • vns (Variable)  │
+                       │ • tabu (Tabu)     │
                        └───────────────────┘
 ```
 
@@ -162,6 +164,19 @@ Local search methods start from a complete candidate solution and iteratively ex
 ### 4.6. Variable Neighborhood Search (`vns`)
 * **Concept:** Similar to ILS, but systematically scales the shaking strength $k \in \{1, \dots, 5\}$ (subpath length $n/(9-k)$). When local search improves the incumbent tour, $k$ resets to 1; otherwise, $k$ increases to escape deeper basins.
 
+### 4.7. Tabu Search (`tabu`)
+* **Concept:** A memory-based trajectory metaheuristic that guides a local search process to explore beyond local optimality by forbidding (making *tabu*) recently visited or reversed moves.
+* **Core Mechanisms:**
+  1. **Short-Term Memory (Tabu List):** Stores the swapped city elements and their new permutation indices $(i, j, \text{Pos}(i), \text{Pos}(j))$. Any move that attempts to place element $i$ at $\text{Pos}(i)$ or element $j$ at $\text{Pos}(j)$ is forbidden for a duration determined by the tabu tenure (initially $\lfloor n/2 \rfloor$).
+  2. **Neighbor Selection Strategy:** In each iteration, 40 candidate neighbors are evaluated through pairwise swaps. The best non-tabu neighbor is chosen to update the current trajectory.
+  3. **Aspiration Criterion:** If a forbidden candidate move produces a tour cost strictly lower than the best global solution found so far ($C(s_{cand}) < C(s_{best})$), the tabu restriction is bypassed and the move is accepted.
+  4. **Long-Term Memory Frequency Matrix ($f_{req}$):** An $n \times n$ matrix records the cumulative frequency $f_{req}(l, u)$ of each unit/city $u$ occupying location/position $l$ across accepted configurations.
+  5. **Diversification Reinitializations:** Scheduled 4 times during the run (every $10 \cdot n$ iterations for total $N_{max} = 50 \cdot n$ iterations):
+     - **Probability 0.25:** Random restart via complete permutation shuffle.
+     - **Probability 0.25:** Re-intensification from the global best solution $s_{best}$.
+     - **Probability 0.50:** Long-term memory greedy diversification, iteratively matching pairs $(l^*, u^*)$ with minimal $f_{req}(l, u)$ to enforce unvisited assignments.
+     - **Adaptive Tenure Scaling:** Post-restart, the tabu tenure is either increased or decreased by 50% with equal probability (0.50).
+
 ---
 
 ## 5. Category 3: Metaheuristics & Evolutionary Algorithms
@@ -239,13 +254,14 @@ Local search methods start from a complete candidate solution and iteratively ex
 | | Basic Multiboot | `bmb` | $O(k \cdot I \cdot n^2)$ | $O(n^2)$ |
 | | Iterated Local Search | `ils` | $O(k \cdot I \cdot n^2)$ | $O(n^2)$ |
 | | Variable Neighborhood Search | `vns` | $O(k \cdot I \cdot n^2)$ | $O(n^2)$ |
+| | Tabu Search | `tabu` | $O(N_{max} \cdot (K \cdot |T| + n))$ | $O(n^2)$ |
 | **Metaheuristics** | Simulated Annealing | `sa` | $O(N_{max})$ | $O(n^2)$ |
 | | Genetic Algorithm | `ga` | $O(G \cdot P \cdot n)$ | $O(P \cdot n + n^2)$ |
 | | Memetic Algorithm | `ma` | $O(G \cdot (P \cdot n + I \cdot n^2))$ | $O(P \cdot n + n^2)$ |
 | **Parallel** | Parallel SA | `psa` | $O(P \cdot N_{max})$ | $O(P \cdot n^2)$ |
 | | Parallel GA | `pga` | $O(P \cdot G \cdot n)$ | $O(P \cdot S \cdot n + n^2)$ |
 
-*Notation:* $n$ = cities, $I$ = 2-opt improvement steps, $k$ = iterations/restarts, $P$ = population/processes, $G$ = generations, $S$ = island size.
+*Notation:* $n$ = cities, $I$ = 2-opt improvement steps, $k$ = iterations/restarts, $K$ = candidate neighbors (40), $|T|$ = tabu tenure, $P$ = population/processes, $G$ = generations, $S$ = island size.
 
 ### Empirical Benchmarks on TSPLIB Instances
 
@@ -256,6 +272,7 @@ Local search methods start from a complete candidate solution and iteratively ex
 | **Local Search (2-Opt)** | **$10,527$** | **$29,420$** | **$3,480$** | $\approx 1$ ms |
 | **Greedy + Local Search** | **$8,117$** | **$26,200$** | **$3,080$** | $\approx 1$ ms |
 | **Simulated Annealing** | **$8,400 - 11,000$** | **$26,000 - 32,000$** | **$3,100 - 3,500$** | $\approx 1$ ms |
+| **Tabu Search** | **$8,900 - 10,400$** | **$26,500 - 31,000$** | **$3,150 - 3,400$** | $\approx 2$ ms |
 | **Variable Neighborhood Search** | **$9,012$** | **$27,500$** | **$3,150$** | $\approx 2$ ms |
 | **Iterated Local Search** | **$9,451$** | **$28,100$** | **$3,200$** | $\approx 3$ ms |
 | **Memetic Algorithm** | **$8,500 - 10,400$** | **$26,500 - 30,000$** | **$3,050 - 3,300$** | $\approx 5$ ms |

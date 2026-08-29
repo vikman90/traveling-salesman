@@ -374,6 +374,8 @@ nlohmann::json AppController::runAlgorithm(const nlohmann::json &params)
         Algorithms::iteratedLocalSearch(cycle, count, seed);
     } else if (algo == "vns") {
         Algorithms::variableSearch(cycle, count, seed);
+    } else if (algo == "tabu" || algo == "ts" || algo == "taboo") {
+        Algorithms::tabuSearch(cycle, count, seed);
     } else if (algo == "ga") {
         Algorithms::genetic(cycle, size, count, scheme, seed);
     } else if (algo == "ma") {
