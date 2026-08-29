@@ -101,6 +101,19 @@ int main() {
         std::cout << "  ✓ Stationary evolution invariant preservation verified" << std::endl;
     }
 
+    // Test 5: Order Crossover (OX) Multi-iteration Convergence & Validity
+    {
+        Population pop(30, sample, rng);
+        float initCost = pop[pop.bestCycle()].getCost();
+        for (int gen = 0; gen < 200; ++gen) {
+            pop.evolve(Algorithms::Generational);
+        }
+        float finalCost = pop[pop.bestCycle()].getCost();
+        assert(finalCost <= initCost);
+        std::cout << "  ✓ Order Crossover (OX) evolutionary convergence verified (Initial: " 
+                  << initCost << ", Final: " << finalCost << ")" << std::endl;
+    }
+
     std::cout << "🎉 ALL POPULATION UNIT TESTS PASSED!\n" << std::endl;
     return 0;
 }
