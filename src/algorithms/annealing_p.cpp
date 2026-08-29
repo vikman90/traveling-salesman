@@ -16,35 +16,83 @@ void parallelAnnealing(Cycle &data, int processes, int count, int migrLatency, u
     if (processes < 1) processes = 1;
     if (migrLatency < 1) migrLatency = 1;
 
-    const int times = std::max(1, count / migrLatency);
+    const int n = data.getSize();
+    if (n < 3) return;
+
+    // Parameters as specified in P4 §3.1:
+    // Total coolings per process: count * n (default count = 20 -> 20 * n)
+    // Neighbors per cooling step: L = 20
+    // Migration epoch interval: migrLatency * n (default migrLatency = 1 -> n)
+    const int totalCoolings = count * n;
+    const int epochCoolings = migrLatency * n;
+    constexpr int L = 20;
+    constexpr double P_FACTOR = 0.249175;
+    constexpr double TEMPEND = 0.001;
+
     std::mt19937 generator(seed);
-    Cycle &bestCycle = data;
+    Cycle bestGlobal = data;
+    bestGlobal.clearPath();
 
-    std::vector<Cycle> cycles(processes, data);
-    for (int i = 0; i < processes; ++i) {
-        cycles[i].shufflePath(generator);
+    struct IslandState {
+        Cycle curCycle;
+        Cycle auxCycle;
+        double temperature{0.0};
+        double beta{0.0};
+    };
+
+    std::vector<IslandState> islands(processes);
+    for (int p = 0; p < processes; ++p) {
+        islands[p].curCycle = data;
+        islands[p].curCycle.shufflePath(generator);
+        islands[p].auxCycle = islands[p].curCycle;
+        islands[p].temperature = P_FACTOR * islands[p].curCycle.getCost();
+        islands[p].beta = (islands[p].temperature - TEMPEND) / (totalCoolings * L * islands[p].temperature * TEMPEND);
+
+        if (islands[p].curCycle.getCost() < bestGlobal.getCost()) {
+            bestGlobal.setPath(islands[p].curCycle);
+        }
     }
 
-    for (int k = 1; k < times; ++k) {
-        // Temperature cooling step across parallel threads/islands
-        for (int i = 0; i < processes; ++i) {
-            simulatedAnnealing(cycles[i], 1, generator, Swap);
-        }
+    std::uniform_real_distribution<double> uniform01(0.0, 1.0);
 
-        // Identify best overall cycle
-        for (int i = 0; i < processes; ++i) {
-            if (cycles[i].getCost() < bestCycle.getCost()) {
-                bestCycle.setPath(cycles[i]);
+    for (int step = 0; step < totalCoolings; step += epochCoolings) {
+        int stepsThisEpoch = std::min(epochCoolings, totalCoolings - step);
+
+        // Run each process for this epoch
+        for (int p = 0; p < processes; ++p) {
+            auto &isl = islands[p];
+            for (int s = 0; s < stepsThisEpoch; ++s) {
+                for (int l = 0; l < L; ++l) {
+                    int i = random(generator, n);
+                    int j = random(generator, n);
+                    while (i == j) {
+                        j = random(generator, n);
+                    }
+
+                    isl.auxCycle.swap(i, j);
+                    double delta = isl.auxCycle.getCost() - isl.curCycle.getCost();
+
+                    if (delta <= 0.0 || uniform01(generator) < std::exp(-delta / isl.temperature)) {
+                        isl.curCycle.setPath(isl.auxCycle);
+                        if (isl.curCycle.getCost() < bestGlobal.getCost()) {
+                            bestGlobal.setPath(isl.curCycle);
+                        }
+                    } else {
+                        isl.auxCycle.swap(i, j); // Revert
+                    }
+                }
+                isl.temperature /= (1.0 + isl.beta * isl.temperature);
             }
         }
 
-        // Migrate / synchronize best solution
-        if (k < times - 1) {
-            for (int i = 0; i < processes; ++i) {
-                cycles[i].setPath(bestCycle);
-            }
+        // Migration step: All processes adopt the global best solution so far
+        for (int p = 0; p < processes; ++p) {
+            islands[p].curCycle.setPath(bestGlobal);
+            islands[p].auxCycle.setPath(bestGlobal);
         }
     }
+
+    data.setPath(bestGlobal);
 }
 
 } // namespace Algorithms
