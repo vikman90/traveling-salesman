@@ -241,7 +241,7 @@ public:
     }
 
     /**
-     * @brief Update precomputed distance matrix from current vertex coordinates
+     * @brief Update precomputed distance matrix from current vertex coordinates (TSPLIB EUC_2D rounded metric)
      */
     void updateDistances();
 
