@@ -1,6 +1,6 @@
 /**
  * @file test_algorithms_invariants.cpp
- * @brief Unit tests verifying algorithmic invariants and valid permutations for all 16 TSP algorithms
+ * @brief Unit tests verifying algorithmic invariants and valid permutations for all 17 TSP algorithms
  */
 
 #include <cassert>
@@ -30,7 +30,7 @@ static void verifyPermutationInvariant(const Cycle &c, int expectedSize, const s
 }
 
 int main() {
-    std::cout << "[UNIT TEST] Running Algorithms Invariants tests across all 16 algorithms..." << std::endl;
+    std::cout << "[UNIT TEST] Running Algorithms Invariants tests across all 17 algorithms..." << std::endl;
 
     constexpr int N = 20;
     Cycle baseGraph;
@@ -145,10 +145,18 @@ int main() {
         Cycle c = baseGraph;
         Algorithms::variableSearch(c, 10, 42);
         verifyPermutationInvariant(c, N, "vns");
-        std::cout << "  ✓ [13/16] vns invariant verified" << std::endl;
+        std::cout << "  ✓ [13/17] vns invariant verified" << std::endl;
     }
 
-    // 14. Genetic Algorithm (Generational & Stationary)
+    // 14. Tabu Search (BT)
+    {
+        Cycle c = baseGraph;
+        Algorithms::tabuSearch(c, 10, 42);
+        verifyPermutationInvariant(c, N, "tabu");
+        std::cout << "  ✓ [14/17] tabu invariant verified" << std::endl;
+    }
+
+    // 15. Genetic Algorithm (Generational & Stationary)
     {
         Cycle cGener = baseGraph;
         Algorithms::genetic(cGener, 10, 20, Algorithms::Generational, 42);
@@ -157,18 +165,18 @@ int main() {
         Cycle cStat = baseGraph;
         Algorithms::genetic(cStat, 10, 20, Algorithms::Stationary, 42);
         verifyPermutationInvariant(cStat, N, "ga_stat");
-        std::cout << "  ✓ [14/16] ga (gener/stat) invariants verified" << std::endl;
+        std::cout << "  ✓ [15/17] ga (gener/stat) invariants verified" << std::endl;
     }
 
-    // 15. Memetic Algorithm
+    // 16. Memetic Algorithm
     {
         Cycle c = baseGraph;
         Algorithms::memetic(c, 10, 10, Algorithms::Everygen_Everychrom, 42);
         verifyPermutationInvariant(c, N, "ma");
-        std::cout << "  ✓ [15/16] ma invariant verified" << std::endl;
+        std::cout << "  ✓ [16/17] ma invariant verified" << std::endl;
     }
 
-    // 16. Parallel Metaheuristics (PSA & PGA)
+    // 17. Parallel Metaheuristics (PSA & PGA)
     {
         Cycle cPSA = baseGraph;
         Algorithms::parallelAnnealing(cPSA, 3, 10, 2, 42);
@@ -180,9 +188,9 @@ int main() {
 
         Algorithms::parallelGenetic(cPGA, 3, 10, 10, 2, Algorithms::Star, 42);
         verifyPermutationInvariant(cPGA, N, "pga_star");
-        std::cout << "  ✓ [16/16] psa & pga invariants verified" << std::endl;
+        std::cout << "  ✓ [17/17] psa & pga invariants verified" << std::endl;
     }
 
-    std::cout << "🎉 ALL 16 ALGORITHM INVARIANTS PASSED!\n" << std::endl;
+    std::cout << "🎉 ALL 17 ALGORITHM INVARIANTS PASSED!\n" << std::endl;
     return 0;
 }

@@ -63,7 +63,7 @@ int main() {
     // 5. Algorithm Execution via JSON API
     std::vector<std::string> algos = {
         "greedy", "rs", "ls", "vnd", "sa", "greedyls", "greedyls+",
-        "bmb", "grasp", "grasp+", "ils", "vns", "ga", "ma", "psa", "pga"
+        "bmb", "grasp", "grasp+", "ils", "vns", "tabu", "ga", "ma", "psa", "pga"
     };
 
     for (const auto &algo : algos) {
@@ -84,7 +84,7 @@ int main() {
         assert(res["cost"] > 0.0f);
         assert(res["timeMs"] >= 0.0);
     }
-    std::cout << "  ✓ JSON Algorithm runner verified for all 16 algorithms" << std::endl;
+    std::cout << "  ✓ JSON Algorithm runner verified for all 17 algorithms" << std::endl;
 
     std::cout << "🎉 ALL APP_CONTROLLER INTEGRATION TESTS PASSED!\n" << std::endl;
     return 0;

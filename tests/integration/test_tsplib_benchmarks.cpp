@@ -82,7 +82,16 @@ int main() {
         assert(vnsCost < randomCost * 0.55f);
     }
 
-    // Test 5: Parallel Genetic Algorithm (PGA - Ring)
+    // Test 5: Tabu Search (BT)
+    {
+        Cycle c = berlin;
+        Algorithms::tabuSearch(c, 50, 42);
+        float tabuCost = c.getCost();
+        std::cout << "  • berlin52 Tabu Search cost: " << tabuCost << std::endl;
+        assert(tabuCost < randomCost * 0.55f);
+    }
+
+    // Test 6: Parallel Genetic Algorithm (PGA - Ring)
     {
         Cycle c = berlin;
         Algorithms::parallelGenetic(c, 4, 20, 50, 2, Algorithms::Ring, 42);
