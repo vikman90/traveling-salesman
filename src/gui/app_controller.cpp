@@ -380,6 +380,8 @@ nlohmann::json AppController::runAlgorithm(const nlohmann::json &params)
         Algorithms::genetic(cycle, size, count, scheme, seed);
     } else if (algo == "ma") {
         Algorithms::memetic(cycle, size, count, hybridization, seed);
+    } else if (algo == "scatter" || algo == "ss" || algo == "bd") {
+        Algorithms::scatterSearch(cycle, count, seed);
     } else if (algo == "psa") {
         Algorithms::parallelAnnealing(cycle, processes, count, migrLatency, seed);
     } else if (algo == "pga") {

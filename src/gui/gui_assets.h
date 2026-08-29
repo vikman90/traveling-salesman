@@ -771,6 +771,7 @@ const std::string INDEX_HTML = R"rawliteral(<!DOCTYPE html>
               <option value="sa" selected>Simulated Annealing (sa)</option>
               <option value="ga">Genetic Algorithm (ga)</option>
               <option value="ma">Memetic Algorithm (ma)</option>
+              <option value="scatter">Scatter Search (scatter / bd)</option>
             </optgroup>
             <optgroup label="Parallel Metaheuristics">
               <option value="psa">Parallel Simulated Annealing (psa)</option>
@@ -1297,6 +1298,7 @@ const std::string INDEX_HTML = R"rawliteral(<!DOCTYPE html>
       'sa': { name: 'Simulated Annealing (sa)', tag: 'Thermodynamic Metaheuristic', desc: 'Probabilistically accepts worsening moves to escape local optima.' },
       'ga': { name: 'Genetic Algorithm (ga)', tag: 'Evolutionary Algorithm', desc: 'Evolves a population of tours using crossover, mutation, and selection.' },
       'ma': { name: 'Memetic Algorithm (ma)', tag: 'Hybrid Evolutionary', desc: 'Genetic algorithm enhanced with local search optimization on individuals.' },
+      'scatter': { name: 'Scatter Search (scatter / bd)', tag: 'Population Metaheuristic', desc: 'Evolves a small reference set of elite and diverse tours with OX crossover and local search.' },
       'psa': { name: 'Parallel Simulated Annealing', tag: 'Parallel Metaheuristic', desc: 'Executes concurrent SA chains with periodic solution migration.' },
       'pga': { name: 'Parallel Genetic Algorithm', tag: 'Island Model GA', desc: 'Simulates multiple evolving islands with ring or star topology migration.' }
     };
